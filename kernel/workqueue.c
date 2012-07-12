@@ -1881,8 +1881,8 @@ __acquires(&gcwq->lock)
 	 * Unbound gcwq isn't concurrency managed and work items should be
 	 * executed ASAP.  Wake up another worker if necessary.
 	 */
-	if ((worker->flags & WORKER_UNBOUND) && need_more_worker(pool))
-		wake_up_worker(pool);
+	if ((worker->flags & WORKER_UNBOUND) && need_more_worker(gcwq))
+		wake_up_worker(gcwq);
 
 	spin_unlock_irq(&gcwq->lock);
 
