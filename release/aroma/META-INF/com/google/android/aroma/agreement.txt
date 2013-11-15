@@ -1,0 +1,9 @@
+
+
+<b>Agreement:</b>
+
+<*>This kernel is provided as-is without warranty. You are installing this at your own risks</*>
+
+<*>I'm not responsible for any problem you may encounter with your phone or if your cat suddenly dies.</*>
+
+<*>By using this kernel, you agree with the above terms!</*>

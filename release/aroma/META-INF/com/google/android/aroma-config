@@ -1,0 +1,288 @@
+﻿### LICENSE:
+#
+# Copyright (C) 2011 Ahmad Amarullah ( http://amarullz.com/ )
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+### FILE INFO:
+#
+# AROMA Installer 2.70 - AROMA Installer Test Script Configuration
+#       (c) 2011-2012 by Ahmad Amarullah
+#           amarullz - xda-developers
+#           http://www.amarullz.com/
+#
+#       Binary Version  : 2.70B6
+#       Binary Codename : Flamboyan
+#
+### INFO:
+#
+# * AROMA Resource Dir  = META-INF/com/google/android/aroma
+#
+# * AROMA Temporary Dir = /tmp/aroma/
+
+ini_set("rom_name",             "Glitch kernel");
+ini_set("rom_version",          "Flo-CAF");
+ini_set("rom_author",           "Tk-Glitch");
+ini_set("rom_device",           "Nexus 7 (2013)");
+ini_set("rom_date",             "November 2013");
+
+ini_set("force_colorspace","rgba");
+#ini_set("dp","6");
+
+fontresload( "0", "ttf/Roboto-Regular.ttf", "12" );
+fontresload( "1", "ttf/Roboto-Regular.ttf", "18" ); 
+
+splash(3500, "glitch");
+
+
+viewbox(
+    "Welcome",
+    "You are about to flash <b>"+
+	  ini_get("rom_name")+
+	"</b>\nfor <b>"+ini_get("rom_device")+"</b>.\n\n"+
+    
+	
+      "  VERSION\t: <b><#selectbg_g>"+ini_get("rom_version")+"</#></b>\n"+
+      "  AUTHOR \t: <b><#selectbg_g>"+ini_get("rom_author")+"</#></b>\n"+
+      "  RELEASED\t: <b><#selectbg_g>"+ini_get("rom_date")+"</#></b>\n\n\n"+
+
+    "Press Next to Continue...",
+    "@welcome"
+);
+
+agreebox("Terms Of Use","Please read the Glitch kernel Terms of Use...","icons/agreement",
+   "" + readfile_aroma("agreement.txt"),
+   "I Agree with these Terms Of Use...",
+   "Please check the box..."
+);
+
+textbox("Changelog",ini_get("rom_name") + " Changelog","icons/info",readfile_aroma("changelog.txt"));
+
+alert(
+  "PLEASE NOTE:",
+  "This kernel will allow you to choose hardware settings that may not work with your device. If you install this and have problems such as instability or random reboots, please reinstall with a lower CPU frequency or higher voltage.",
+  "@alert",
+  "OK"
+);
+
+selectbox(
+  "Set each CPU core separately","If you say yes here you will have the option to set the max freq for each core individually\n","@personalize","cpuopt.prop",
+  "No","(default)",1,
+  "Yes","",0
+);
+
+if file_getprop("/tmp/aroma/cpuopt.prop","selected.0") == "1"
+then
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum CPU frequency\n","@personalize","freq0.prop",
+  "1512MHz","(stock)",0,
+  "1620MHz","",0,
+  "1728MHz","(balanced)",1,
+  "1836MHz","",0,
+  "1890MHz","(performance)",0,
+  "1944MHz","",0,
+  "1998MHz","(high)",0,
+  "2052MHz","",0,
+  "2106MHz","(very high)",0,
+  "2160MHz","",0,
+  "2214MHz","(extreme)",0,
+  "2268MHz","",0,
+  "2322MHz","(glitchy)",0
+);
+
+endif;
+
+if file_getprop("/tmp/aroma/cpuopt.prop","selected.0") == "2"
+then
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for first CPU core\n","@personalize","freq0.prop",
+  "1512MHz","(stock)",0,
+  "1620MHz","",0,
+  "1728MHz","(balanced)",1,
+  "1836MHz","",0,
+  "1890MHz","(performance)",0,
+  "1944MHz","",0,
+  "1998MHz","(high)",0,
+  "2052MHz","",0,
+  "2106MHz","(very high)",0,
+  "2160MHz","",0,
+  "2214MHz","(extreme)",0,
+  "2268MHz","",0,
+  "2322MHz","(glitchy)",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for second CPU core\n","@personalize","freq1.prop",
+  "1512MHz","(stock)",0,
+  "1620MHz","",0,
+  "1728MHz","(balanced)",1,
+  "1836MHz","",0,
+  "1890MHz","(performance)",0,
+  "1944MHz","",0,
+  "1998MHz","(high)",0,
+  "2052MHz","",0,
+  "2106MHz","(very high)",0,
+  "2160MHz","",0,
+  "2214MHz","(extreme)",0,
+  "2268MHz","",0,
+  "2322MHz","(glitchy)",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for third CPU core\n","@personalize","freq2.prop",
+  "1512MHz","(stock)",0,
+  "1620MHz","",0,
+  "1728MHz","(balanced)",1,
+  "1836MHz","",0,
+  "1890MHz","(performance)",0,
+  "1944MHz","",0,
+  "1998MHz","(high)",0,
+  "2052MHz","",0,
+  "2106MHz","(very high)",0,
+  "2160MHz","",0,
+  "2214MHz","(extreme)",0,
+  "2268MHz","",0,
+  "2322MHz","(glitchy)",0
+);
+
+selectbox(
+  "Maximum CPU Frequency","Select maximum frequency for fourth CPU core\n","@personalize","freq3.prop",
+  "1512MHz","(stock)",0,
+  "1620MHz","",0,
+  "1728MHz","(balanced)",1,
+  "1836MHz","",0,
+  "1890MHz","(performance)",0,
+  "1944MHz","",0,
+  "1998MHz","(high)",0,
+  "2052MHz","",0,
+  "2106MHz","(very high)",0,
+  "2160MHz","",0,
+  "2214MHz","(extreme)",0,
+  "2268MHz","",0,
+  "2322MHz","(glitchy)",0
+);
+
+endif;
+
+selectbox(
+  "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose stock\n","@personalize","opt.prop",
+  "stock","(1.13GHz-4.26GBps)",0,
+  "improved","(1.19GHz-4.26GBps)",0,
+  "balanced","(1.22GHz-4.66GBps)",1,
+  "fast","(1.35GHz-4.66GBps)",0,
+  "extreme","(1.43GHz-4.80GBps)",0,
+  "glitchy","(1.49GHz-4.96GBps)",0
+);
+
+selectbox(
+  "Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability.\n","@personalize","uv.prop",
+  "Stock (no undervolt)","",1,
+  "Undervolt (850 min)","",0,
+  "Undervolt (825 min)","",0,
+  "Undervolt (800 min)","",0,
+  "Undervolt (775 min)","",0,
+  "Undervolt (750 min)","",0,
+  "Undervolt (725 min)","",0
+);
+
+selectbox(
+  "Select thermal settings","Determines the amount of thermal throttling for the CPU\n","@personalize","thermal.prop",
+  "run cool","more thermal throttling",0,
+  "default","default thermal throttling",1,
+  "run hot","less thermal throttling",0
+);
+
+selectbox(
+  "Select GPU governor","\n","@personalize","gpugov.prop",
+  "Ondemand","(stock)",1,
+  "Simple","",0
+);
+
+selectbox(
+  "Select Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
+  "4.3V","(100% - stock)",0,
+  "4.2V","(93% - balanced)",1,
+  "4.1V","(83% - conservative)",0,
+  "4.0V","(73% - very conservative)",0
+);
+
+checkbox(
+  "Other settings","Select the mods you want to install\n","@personalize","mods.prop",
+  "Sweep2Wake","Sweep across buttons to sleep/wake device",0,
+  "Sweep2Sleep Only","Sweep across buttons to sleep device",1,
+  "S2W/DT2W power toggle","Makes the power button toggle s2w/dt2w",0,
+  "Shortsweep","Shorter sweep distance for Sweep2Wake",1,
+  "DoubleTap2Wake","Double tap screen to wake device",1,
+  "Disable magnetic on/off","",0,
+  "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0
+);
+
+if file_getprop("/tmp/aroma/mods.prop","item.0.1") == "1" && file_getprop("/tmp/aroma/mods.prop","item.0.2") == "1"
+then 
+alert(
+  "PLEASE NOTE:",
+  "You must choose either sweep2wake OR sweep2sleep only.  You can't choose both",
+  "@alert",
+  "OK"
+);
+back("1");
+endif;
+
+if file_getprop("/tmp/aroma/mods.prop","item.0.2") == "1"
+then 
+selectbox(
+  "Select S2S orientation settings","Controls whether sweep2sleep works in portrait, landscape, or both\n","@personalize","orientation.prop",
+  "Both","",1,
+  "Portrait only","",0,
+  "Landscape only","",0
+);
+endif;
+
+menubox(
+  "Glitch Kernel Installer",
+  "Ready to install",
+  "@info",
+  "menu.prop",
+  "I want to Glitch my device, install it now !","","@install",
+  "Abort installation","","@default"
+);
+
+if prop("menu.prop","selected")=="2"
+then
+  exit("");
+endif;
+
+setvar("retstatus",
+install(
+  "Installing",
+  "Installing Glitch Kernel...\nPlease wait...",
+  "@install")
+);
+
+ini_set("text_next", "Finish");
+
+if getvar("retstatus")=="0" then
+  viewbox(
+  "Installation Completed",
+  "<#080>Congratulations...</#>\n\n"+
+  "Glitch kernel has been installed successfully!\n\n"+
+  "Please let your phone boot completely...\n\n"+
+  "Enjoy!",
+  "@info"
+);
+else
+   viewbox("Installation Failed","\n\nInstaller Status: "+ getvar("retstatus"),"@alert");
+endif;
+

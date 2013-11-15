@@ -139,6 +139,7 @@ extern int nr_processes(void);
 extern unsigned long nr_running(void);
 extern unsigned long nr_uninterruptible(void);
 extern unsigned long nr_iowait(void);
+extern unsigned long avg_nr_running(void);
 extern unsigned long nr_iowait_cpu(int cpu);
 extern unsigned long this_cpu_load(void);
 
@@ -2835,5 +2836,15 @@ static inline unsigned long rlimit_max(unsigned int limit)
 }
 
 #endif /* __KERNEL__ */
+
+#ifdef CONFIG_CGROUP_TIMER_SLACK
+extern unsigned long task_get_effective_timer_slack(struct task_struct *tsk);
+#else
+static inline unsigned long task_get_effective_timer_slack(
+  		struct task_struct *tsk)
+{
+	return tsk->timer_slack_ns;
+}
+#endif
 
 #endif

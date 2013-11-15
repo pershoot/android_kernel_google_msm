@@ -2,6 +2,9 @@
  *
  * Copyright (C) 2011 Elan Microelectronics Corporation.
  *
+ * Sweep2wake and Doubletap2wake for Nexus 7 (flo)
+ * Copyright (C) 2013 Aaron Segaert (flar2) asegaert at gmail.com. All rights reserved.
+ *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
  * may be copied, distributed, and modified under those terms.
@@ -27,6 +30,8 @@
 #include <linux/jiffies.h>
 #include <linux/miscdevice.h>
 #include <linux/debugfs.h>
+
+#include <linux/sweep2wake.h>
 
 // for linux 2.6.36.3
 #include <linux/cdev.h>
@@ -195,6 +200,264 @@ static int debug = DEBUG_INFO;
 		if (debug >= (level)) \
 			printk("[ektf3k]:" __VA_ARGS__); \
 	} while (0)
+
+
+/* sweep2wake */
+static struct input_dev *sweep2wake_pwrdev;
+static DEFINE_MUTEX(s2w_lock);
+static bool scr_suspended = false;
+
+static int pwrkey_suspend = 1;
+static int s2w_orientation = 0;
+static int shortsweep = 0;
+static int dt2w_switch = 1;
+static int dt2w_switch_temp = 1;
+static int dt2w_changed = 0;
+static int s2w_switch = 1;
+static int s2w_switch_temp = 1;
+static int s2w_changed = 0;
+
+static int s2w_begin_v = 150;
+static int s2w_end_v = 1200;
+static int s2w_begin_h = 350;
+static int s2w_end_h = 1900;
+static int tripoff_vl = 0;
+static int tripoff_vr = 0;
+static int tripoff_hd = 0;
+static int tripoff_hu = 0;
+static int tripon_vl = 0;
+static int tripon_vr = 0;
+static int tripon_hd = 0;
+static int tripon_hu = 0;
+static unsigned long triptime_vl = 0;
+static unsigned long triptime_vr = 0;
+static unsigned long triptime_hd = 0;
+static unsigned long triptime_hu = 0;
+
+static unsigned long dt2w_time[2] = {0, 0};
+static unsigned int dt2w_x[2] = {0, 0};
+static unsigned int dt2w_y[2] = {0, 0};
+static unsigned int dt2w_2_x[2] = {0, 0};
+static unsigned int dt2w_2_y[2] = {0, 0};
+
+#define S2W_TIMEOUT 50
+#define DT2W_TIMEOUT_MAX 50
+#define DT2W_TIMEOUT_MIN 4
+#define DT2W_DELTA 150
+
+void sweep2wake_setdev(struct input_dev * input_device) {
+	sweep2wake_pwrdev = input_device;
+	return;
+}
+
+EXPORT_SYMBOL(sweep2wake_setdev);
+
+static void reset_sweep2wake(int s2w, int dt2w)
+{
+	//reset sweep2wake
+	if (s2w) {
+		tripoff_vl = 0;
+		tripoff_vr = 0;
+		tripoff_hd = 0;
+		tripoff_hu = 0;
+		tripon_vl = 0;
+		tripon_vr = 0;
+		tripon_hd = 0;
+		tripon_hu = 0;
+		triptime_vl = 0;
+		triptime_vr = 0;
+		triptime_hd = 0;
+		triptime_hu = 0;
+	}
+
+	//reset doubletap2wake
+	if (dt2w) {
+		dt2w_time[0] = 0;
+		dt2w_x[0] = 0;
+		dt2w_y[0] = 0;
+		dt2w_time[1] = 0;
+		dt2w_x[1] = 0;
+		dt2w_y[1] = 0;
+		dt2w_2_x[0] = 0;
+		dt2w_2_x[1] = 0;
+		dt2w_2_y[0] = 0;
+		dt2w_2_y[1] = 0;
+	}
+	return;
+}
+
+static void sweep2wake_presspwr(struct work_struct *sweep2wake_presspwr_work)
+{
+	reset_sweep2wake(1,1);
+
+	input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 1);
+	input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
+	msleep(20);
+	input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 0);
+	input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
+	msleep(20);
+	mutex_unlock(&s2w_lock);
+}
+
+static DECLARE_WORK(sweep2wake_presspwr_work, sweep2wake_presspwr);
+
+void sweep2wake_pwrtrigger(void)
+{
+	if (mutex_trylock(&s2w_lock)) 
+		schedule_work(&sweep2wake_presspwr_work);
+}
+
+static void sweep2wake_func(int x, int y, unsigned long time, int i)
+{
+	if (x < 0 || i > 0) {
+		reset_sweep2wake(1,0);
+		return;
+	}
+
+	if (scr_suspended == true && s2w_switch == 1) {
+		//left->right
+		if (y < s2w_begin_v) {
+			tripon_vr = 1;
+			triptime_vr = time;
+		} else if (tripon_vr == 1 && y > 488  && time - triptime_vr < 20) {
+			tripon_vr = 2;
+		} else if (tripon_vr == 2 && y > 896 && time - triptime_vr < 40) {
+			tripon_vr = 3;
+		} else if (tripon_vr == 3 && (y > s2w_end_v) && time - triptime_vr < S2W_TIMEOUT) {
+			printk(KERN_INFO "[s2w]: ON");
+			sweep2wake_pwrtrigger();
+		} 
+		//right->left
+		if (y > s2w_end_v) {
+			tripon_vl = 1;
+			triptime_vl = time;
+		} else if (tripon_vl == 1 && y < 896  && time - triptime_vl < 20) {
+			tripon_vl = 2;
+		} else if (tripon_vl == 2 && y < 488 && time - triptime_vl < 40) {
+			tripon_vl = 3;
+		} else if (tripon_vl == 3 && y < s2w_begin_v && (time - triptime_vl < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: ON");
+			sweep2wake_pwrtrigger();
+		}
+		//top->bottom
+		if (x < s2w_begin_h) {
+			tripon_hd = 1;
+			triptime_hd = time;
+		} else if (tripon_hd == 1 && x > 748  && time - triptime_hd < 25) {
+			tripon_hd = 2;
+		} else if (tripon_hd == 2 && x > 1496 && time - triptime_hd < 45) {
+			tripon_hd = 3;
+		} else if (tripon_hd == 3 && x > s2w_end_h && (time - triptime_hd < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: ON");
+			sweep2wake_pwrtrigger();
+		} 
+		//bottom->top
+		if (x > s2w_end_h) {
+			tripon_hu = 1;
+			triptime_hu = time;
+		} else if (tripon_hu == 1 && x < 1496  && time - triptime_hu < 25) {
+			tripon_hu = 2;
+		} else if (tripon_hu == 2 && x < 748 && time - triptime_hu < 45) {
+			tripon_hu = 3;
+		} else if (tripon_hu == 3 && x < s2w_begin_h && (time - triptime_hu < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: ON");
+			sweep2wake_pwrtrigger();
+		} 
+	}
+	
+	if (scr_suspended == false && s2w_switch > 0) {
+		//right->left portrait mode normal
+		if (y > s2w_end_v && x > 2140 && (s2w_orientation == 0 || s2w_orientation == 1)) {
+			tripoff_vl = 1;
+			triptime_vl = time;
+		} else if (tripoff_vl == 1 && y < 896  && time - triptime_vl < 20) {
+			tripoff_vl = 2;
+		} else if (tripoff_vl == 2 && y < 488 && time - triptime_vl < 40) {
+			tripoff_vl = 3;
+		} else if (tripoff_vl == 3 && y < (s2w_begin_v) && (time - triptime_vl < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: OFF");
+			sweep2wake_pwrtrigger();
+		} 
+		//left->right portrait mode upside down
+		if (y < s2w_begin_v && x < 100 && (s2w_orientation == 0 || s2w_orientation == 1)) {
+			tripoff_vr = 1;
+			triptime_vr = time;
+		} else if (tripoff_vr == 1 && y > 488  && time - triptime_vr < 20) {
+			tripoff_vr = 2;
+		} else if (tripoff_vr == 2 && y > 896 && time - triptime_vr < 40) {
+			tripoff_vr = 3;
+		} else if (tripoff_vr == 3 && y > s2w_end_v && time - triptime_vr < S2W_TIMEOUT) {
+			printk(KERN_INFO "[s2w]: OFF");
+			sweep2wake_pwrtrigger();
+		} 		
+		//top->bottom
+		if (x < s2w_begin_h && y > 1244 && (s2w_orientation == 0 || s2w_orientation == 2)) {
+			tripoff_hd = 1;
+			triptime_hd = time;
+		} else if (tripoff_hd == 1 && x > 748  && time - triptime_hd < 25) {
+			tripoff_hd = 2;
+		} else if (tripoff_hd == 2 && x > 1496 && time - triptime_hd < 45) {
+			tripoff_hd = 3;
+		} else if (tripoff_hd == 3 && x > s2w_end_h && (time - triptime_hd < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: OFF");
+			sweep2wake_pwrtrigger();
+		} 
+		//bottom->top
+		if (x > s2w_end_h && y < 100 && (s2w_orientation == 0 || s2w_orientation == 2)) {
+			tripoff_hu = 1;
+			triptime_hu = time;
+		} else if (tripoff_hu == 1 && x < 1496  && time - triptime_hu < 25) {
+			tripoff_hu = 2;
+		} else if (tripoff_hu == 2 && x < 748 && time - triptime_hu < 45) {
+			tripoff_hu = 3;
+		} else if (tripoff_hu == 3 && x < s2w_begin_h && (time - triptime_hu < S2W_TIMEOUT)) {
+			printk(KERN_INFO "[s2w]: OFF");
+			sweep2wake_pwrtrigger();
+		} 
+	}
+}
+
+static void doubletap2wake_func(int x, int y)
+{
+
+	int delta_x = 0;
+	int delta_y = 0;
+
+	//printk("x=%d y=%d\n", x, y);
+
+	dt2w_x[1] = dt2w_x[0];
+	dt2w_x[0] = x;
+	dt2w_y[1] = dt2w_y[0];
+	dt2w_y[0] = y;
+
+	if (x < 0) {
+		dt2w_2_x[1] = dt2w_2_x[0];
+		dt2w_2_x[0] = dt2w_x[1];
+		dt2w_2_y[1] = dt2w_2_y[0];
+		dt2w_2_y[0] = dt2w_y[1];
+		dt2w_time[1] = dt2w_time[0];
+		dt2w_time[0] = jiffies;
+		
+		//printk("x0=%d x1=%d time0=%lu time1=%lu\n", dt2w_2_x[0], dt2w_2_x[1], dt2w_time[0], dt2w_time[1]);
+
+		delta_x = (dt2w_2_x[0]-dt2w_2_x[1]);
+		delta_y = (dt2w_2_y[0]-dt2w_2_y[1]);
+
+		if ((abs(delta_x) < DT2W_DELTA) && (abs(delta_y) < DT2W_DELTA)) {
+			if ( ((dt2w_time[0] - dt2w_time[1]) > DT2W_TIMEOUT_MIN)
+					 && ((dt2w_time[0] - dt2w_time[1]) < DT2W_TIMEOUT_MAX)) {
+
+	                        printk("[dt2w]: OFF->ON\n");
+	                        sweep2wake_pwrtrigger();
+			}
+		} 
+	}
+
+        return;
+}
+
+/* end sweep2wake */
+
 
 int elan_iap_open(struct inode *inode, struct file *filp){ 
 	touch_debug(DEBUG_INFO, "[ELAN]into elan_iap_open\n");
@@ -381,6 +644,147 @@ static ssize_t elan_show_status(struct device *dev, struct device_attribute *dev
 
 DEVICE_ATTR(elan_touchpanel_status, S_IRUGO, elan_show_status, NULL);
 
+
+
+/* sweep2wake sysfs */
+static ssize_t elan_ktf3k_sweep2wake_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+
+	if (s2w_switch == s2w_switch_temp )
+		count += sprintf(buf, "%d\n", s2w_switch);
+	else
+		count += sprintf(buf, "%d->%d\n", s2w_switch, s2w_switch_temp);
+
+	return count;
+}
+
+static ssize_t elan_ktf3k_sweep2wake_dump(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	if (buf[0] >= '0' && buf[0] <= '2' && buf[1] == '\n')
+            if (s2w_switch != buf[0] - '0') {
+		        s2w_switch_temp = buf[0] - '0';
+			if (!scr_suspended)
+				s2w_switch = s2w_switch_temp;
+			else
+				s2w_changed = 1;
+		}
+
+	return count;
+}
+
+static DEVICE_ATTR(sweep2wake, (S_IWUSR|S_IRUGO),
+	elan_ktf3k_sweep2wake_show, elan_ktf3k_sweep2wake_dump);
+
+static ssize_t elan_ktf3k_pwrkey_suspend_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+	count += sprintf(buf, "%d\n", pwrkey_suspend);
+	return count;
+}
+
+static ssize_t elan_ktf3k_pwrkey_suspend_dump(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	if (buf[0] >= '0' && buf[0] <= '1' && buf[1] == '\n')
+            if (pwrkey_suspend != buf[0] - '0')
+		        pwrkey_suspend = buf[0] - '0';
+
+	return count;
+}
+
+static DEVICE_ATTR(pwrkey_suspend, (S_IWUSR|S_IRUGO),
+	elan_ktf3k_pwrkey_suspend_show, elan_ktf3k_pwrkey_suspend_dump);
+
+static ssize_t elan_ktf3k_orientation_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+	count += sprintf(buf, "%d\n", s2w_orientation);
+	return count;
+}
+
+static ssize_t elan_ktf3k_orientation_dump(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	if (buf[0] >= '0' && buf[0] <= '2' && buf[1] == '\n')
+            if (s2w_orientation != buf[0] - '0') 
+		        s2w_orientation = buf[0] - '0';
+
+	return count;
+}
+
+static DEVICE_ATTR(orientation, (S_IWUSR|S_IRUGO),
+	elan_ktf3k_orientation_show, elan_ktf3k_orientation_dump);
+	
+static ssize_t elan_ktf3k_shortsweep_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+	count += sprintf(buf, "%d\n", shortsweep);
+	return count;
+}
+
+static ssize_t elan_ktf3k_shortsweep_dump(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	if (buf[0] >= '0' && buf[0] <= '1' && buf[1] == '\n')
+        if (shortsweep != buf[0] - '0') 
+		    shortsweep = buf[0] - '0';
+
+	if (shortsweep) {
+		s2w_begin_v = 400 ;
+		s2w_end_v = 950;
+		s2w_begin_h = 650;
+		s2w_end_h = 1600;
+	} else {
+		s2w_begin_v = 150;
+		s2w_end_v = 1200;
+		s2w_begin_h = 350;
+		s2w_end_h = 1900;
+	}
+
+	return count;
+}
+
+static DEVICE_ATTR(shortsweep, (S_IWUSR|S_IRUGO),
+	elan_ktf3k_shortsweep_show, elan_ktf3k_shortsweep_dump);
+
+static ssize_t elan_ktf3k_doubletap2wake_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	size_t count = 0;
+
+	if (dt2w_switch == dt2w_switch_temp) 
+		count += sprintf(buf, "%d\n", dt2w_switch);
+	else
+		count += sprintf(buf, "%d->%d\n", dt2w_switch, dt2w_switch_temp);
+
+	return count;
+}
+
+static ssize_t elan_ktf3k_doubletap2wake_dump(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	if (buf[0] >= '0' && buf[0] <= '1' && buf[1] == '\n')
+		if (dt2w_switch != buf[0] - '0') {
+			dt2w_switch_temp = buf[0] - '0';
+			if (!scr_suspended)
+				dt2w_switch = dt2w_switch_temp;
+			else
+				dt2w_changed = 1;
+		}
+
+	return count;
+}
+
+static DEVICE_ATTR(doubletap2wake, (S_IWUSR|S_IRUGO),
+	elan_ktf3k_doubletap2wake_show, elan_ktf3k_doubletap2wake_dump); 
+
+/* end sweep2wake sysfs*/
+
+
 static int check_fw_version(const unsigned char*firmware, unsigned int size, int fw_version){
        int id, version;
 	   
@@ -403,7 +807,6 @@ static int check_fw_version(const unsigned char*firmware, unsigned int size, int
 	 }
 	 
 }
-
 
 /*
 static ssize_t update_firmware(struct device *dev, struct device_attribute *devattr,const char *buf, size_t count)
@@ -459,12 +862,18 @@ static struct attribute *elan_attr[] = {
 	&dev_attr_vendor.attr,
 	&dev_attr_gpio.attr,
 	//&dev_attr_update_fw.attr,
+/* sweep2wake sysfs */
+	&dev_attr_sweep2wake.attr,
+	&dev_attr_doubletap2wake.attr,
+	&dev_attr_shortsweep.attr,
+	&dev_attr_pwrkey_suspend.attr,
+	&dev_attr_orientation.attr,
 	NULL
 };
 
 static struct kobject *android_touch_kobj;
 
-/*
+
 static int elan_ktf3k_touch_sysfs_init(void)
 {
 	int ret ;
@@ -475,7 +884,7 @@ static int elan_ktf3k_touch_sysfs_init(void)
 		ret = -ENOMEM;
 		return ret;
 	}
-	ret = sysfs_create_file(android_touch_kobj, &dev_attr_gpio.attr);
+/*	ret = sysfs_create_file(android_touch_kobj, &dev_attr_gpio.attr);
 	if (ret) {
 		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_file failed\n", __func__);
 		return ret;
@@ -485,13 +894,46 @@ static int elan_ktf3k_touch_sysfs_init(void)
 		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
 		return ret;
 	}
+*/
+/* sweep2wake sysfs */
+	ret = sysfs_create_file(android_touch_kobj, &dev_attr_sweep2wake.attr);
+	if (ret) {
+		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
+		return ret;
+	}
+	ret = sysfs_create_file(android_touch_kobj, &dev_attr_doubletap2wake.attr);
+	if (ret) {
+		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
+		return ret;
+	}
+	ret = sysfs_create_file(android_touch_kobj, &dev_attr_shortsweep.attr);
+	if (ret) {
+		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
+		return ret;
+	}
+	ret = sysfs_create_file(android_touch_kobj, &dev_attr_pwrkey_suspend.attr);
+	if (ret) {
+		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
+		return ret;
+	}
+	ret = sysfs_create_file(android_touch_kobj, &dev_attr_orientation.attr);
+	if (ret) {
+		touch_debug(DEBUG_ERROR, "[elan]%s: sysfs_create_group failed\n", __func__);
+		return ret;
+	}
 	return 0 ;
 }
-*/
+
 static void elan_touch_sysfs_deinit(void)
 {
-	sysfs_remove_file(android_touch_kobj, &dev_attr_vendor.attr);
-	sysfs_remove_file(android_touch_kobj, &dev_attr_gpio.attr);
+//	sysfs_remove_file(android_touch_kobj, &dev_attr_vendor.attr);
+//	sysfs_remove_file(android_touch_kobj, &dev_attr_gpio.attr);
+/* sweep2wake sysfs */
+	sysfs_remove_file(android_touch_kobj, &dev_attr_sweep2wake.attr);
+	sysfs_remove_file(android_touch_kobj, &dev_attr_doubletap2wake.attr);
+	sysfs_remove_file(android_touch_kobj, &dev_attr_shortsweep.attr);
+	sysfs_remove_file(android_touch_kobj, &dev_attr_pwrkey_suspend.attr);
+	sysfs_remove_file(android_touch_kobj, &dev_attr_orientation.attr);
 	kobject_del(android_touch_kobj);
 }
 
@@ -931,7 +1373,7 @@ static void elan_ktf3k_ts_report_data(struct i2c_client *client, uint8_t *buf)
 {
 	struct elan_ktf3k_ts_data *ts = i2c_get_clientdata(client);
 	struct input_dev *idev = ts->input_dev;
-	uint16_t x, y, touch_size, pressure_size;
+	uint16_t x = 0, y = 0, touch_size, pressure_size;
 	uint16_t fbits=0, checksum=0;
 	uint8_t i, num;
 	static uint8_t size_index[10] = {35, 35, 36, 36, 37, 37, 38, 38, 39, 39};
@@ -961,19 +1403,21 @@ static void elan_ktf3k_ts_report_data(struct i2c_client *client, uint8_t *buf)
                       input_report_abs(idev, ABS_MT_POSITION_X, y);
                       input_report_abs(idev, ABS_MT_POSITION_Y, x);
                       if(unlikely(gPrint_point)) touch_debug(DEBUG_INFO, "[elan] finger id=%d X=%d y=%d size=%d pressure=%d\n", i, x, y, touch_size, pressure_size);
-		     }
+
+		      }
 		 }
 		 mTouchStatus[i] = active;
               fbits = fbits >> 1;
               idx += 3;
 	    }
+
           input_sync(idev);
 	} // checksum
 	else {
 		checksum_err +=1;
 		touch_debug(DEBUG_ERROR, "[elan] Checksum Error %d byte[2]=%X\n", checksum_err, buf[2]);
 	}   
-     	
+
 	return;
 }
 
@@ -987,42 +1431,61 @@ static void elan_ktf3k_ts_report_data2(struct i2c_client *client, uint8_t *buf)
 	uint16_t active = 0; 
 	uint8_t idx=IDX_FINGER;
 
-      num = buf[2] & 0xf;
+	num = buf[2] & 0xf;
 	for (i=0; i<34;i++)
 		checksum +=buf[i];
-	
+
 	if ( (num < 3) || ((checksum & 0x00ff) == buf[34])) {   
-          fbits = buf[2] & 0x30;	
-	    fbits = (fbits << 4) | buf[1]; 
-	    //input_report_key(idev, BTN_TOUCH, 1);
-          for(i = 0; i < FINGER_NUM; i++){
-              active = fbits & 0x1;
-              if(active || mTouchStatus[i]){
-		     input_mt_slot(ts->input_dev, i);
-                  input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, active);
-                  if(active){
-		         elan_ktf3k_ts_parse_xy(&buf[idx], &x, &y);
-                      x = x > ts->abs_x_max ? 0 : ts->abs_x_max - x;
-			   y = y > ts->abs_y_max ? ts->abs_y_max : y;
-			   touch_size = buf[35 + i];
-			   pressure_size = buf[45 + i];	 
-			   input_report_abs(idev, ABS_MT_TOUCH_MAJOR, touch_size);
-			   input_report_abs(idev, ABS_MT_PRESSURE, pressure_size);
-			   input_report_abs(idev, ABS_MT_POSITION_X, y);
-			   input_report_abs(idev, ABS_MT_POSITION_Y, x);
-			   if(unlikely(gPrint_point)) touch_debug(DEBUG_INFO, "[elan] finger id=%d X=%d y=%d size=%d pressure=%d\n", i, x, y, touch_size, pressure_size);
-		     }
-		 }
-		 mTouchStatus[i] = active;
-              fbits = fbits >> 1;
-              idx += 3;
-	    }
-          input_sync(idev);
+		fbits = buf[2] & 0x30;	
+		fbits = (fbits << 4) | buf[1]; 
+
+		//input_report_key(idev, BTN_TOUCH, 1);
+
+		for(i = 0; i < FINGER_NUM; i++){
+			active = fbits & 0x1;
+			if(active || mTouchStatus[i]){
+				input_mt_slot(ts->input_dev, i);
+				input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, active);
+				if(active){
+					elan_ktf3k_ts_parse_xy(&buf[idx], &x, &y);
+					x = x > ts->abs_x_max ? 0 : ts->abs_x_max - x;
+					y = y > ts->abs_y_max ? ts->abs_y_max : y;
+					touch_size = buf[35 + i];
+					pressure_size = buf[45 + i];	 
+					input_report_abs(idev, ABS_MT_TOUCH_MAJOR, touch_size);
+					input_report_abs(idev, ABS_MT_PRESSURE, pressure_size);
+					input_report_abs(idev, ABS_MT_POSITION_X, y);
+					input_report_abs(idev, ABS_MT_POSITION_Y, x);
+					if(unlikely(gPrint_point))
+						touch_debug(DEBUG_INFO, "[elan] finger id=%d X=%d y=%d size=%d pressure=%d\n", i, x, y, touch_size, pressure_size);
+					/* sweep2wake */
+					if (s2w_switch > 0)
+						sweep2wake_func(x, y, jiffies, i);
+					if (dt2w_switch && scr_suspended)	
+						doubletap2wake_func(x, y);
+					/* end sweep2wake */
+				}
+			}
+			mTouchStatus[i] = active;
+			fbits = fbits >> 1;
+			idx += 3;
+		}
+		input_sync(idev);
 	} // checksum
+
 	else {
 		checksum_err +=1;
 		touch_debug(DEBUG_ERROR, "[elan] Checksum Error %d byte[2]=%X\n", checksum_err, buf[2]);
 	} 
+
+	/* sweep2wake */
+	if (checksum == 99) {
+		if (s2w_switch > 0)
+			sweep2wake_func(-1, -1, jiffies, i);
+		if (dt2w_switch && scr_suspended)	
+			doubletap2wake_func(-1, -1);
+	}
+	/* end sweep2wake */
 
 	return;
 }
@@ -1588,7 +2051,7 @@ static int elan_ktf3k_ts_probe(struct i2c_client *client,
 
 	private_ts = ts;
 
-	//elan_ktf2k_touch_sysfs_init();
+	elan_ktf3k_touch_sysfs_init();
       ts->attrs.attrs = elan_attr;
 	err = sysfs_create_group(&client->dev.kobj, &ts->attrs);
 	if (err) {
@@ -1711,14 +2174,26 @@ static int elan_ktf3k_ts_suspend(struct i2c_client *client, pm_message_t mesg)
 	int rc = 0;
 
 	touch_debug(DEBUG_INFO, "[elan] %s: enter\n", __func__);
-	disable_irq(client->irq);
+
+/*s2w*/
+	if ((s2w_switch == 1 || dt2w_switch == 1) ) {
+		enable_irq_wake(client->irq);
+	} else {
+		disable_irq(client->irq);
+	}	
+	
 	force_release_pos(client);
 	rc = cancel_work_sync(&ts->work);
 	if (rc)
 		enable_irq(client->irq);
 
-	if(work_lock == 0)
-	    rc = elan_ktf3k_ts_set_power_state(client, PWR_STATE_DEEP_SLEEP);
+/*s2w*/
+	if(((s2w_switch != 1 && !dt2w_switch) || (pwrkey_suspend && pwr_key_pressed)) && work_lock == 0) {
+		pwr_key_pressed = 0;
+		rc = elan_ktf3k_ts_set_power_state(client, PWR_STATE_DEEP_SLEEP);
+	}
+/*s2w*/
+	scr_suspended = true;
 
 	return 0;
 }
@@ -1727,8 +2202,8 @@ static int elan_ktf3k_ts_resume(struct i2c_client *client)
 {
 
 	int rc = 0, retry = 5;
-      //struct elan_ktf3k_ts_data *ts = i2c_get_clientdata(client);
-      //int delay_time;
+        //struct elan_ktf3k_ts_data *ts = i2c_get_clientdata(client);
+        //int delay_time;
 
 	//gpio_direction_output(31, 0);
 	  
@@ -1745,7 +2220,23 @@ static int elan_ktf3k_ts_resume(struct i2c_client *client)
 	    } while (--retry);
 	}
 	//force_release_pos(client);
-      enable_irq(client->irq);	
+
+/* s2w */
+	if (s2w_switch == 1 || dt2w_switch == 1) {
+		disable_irq_wake(client->irq);
+	} else {
+		enable_irq(client->irq);	
+	}
+
+	if (s2w_changed)
+		s2w_switch = s2w_switch_temp;
+	if (dt2w_changed)
+		dt2w_switch = dt2w_switch_temp;
+
+	scr_suspended = false;
+	pwr_key_pressed = 0;
+/* end s2w */
+
 	return 0;
 }
 
@@ -1800,3 +2291,4 @@ module_exit(elan_ktf3k_ts_exit);
 
 MODULE_DESCRIPTION("ELAN KTF3K Touchscreen Driver");
 MODULE_LICENSE("GPL");
+

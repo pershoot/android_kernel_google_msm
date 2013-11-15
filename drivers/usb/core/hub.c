@@ -2602,6 +2602,10 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 				NULL, 0,
 				USB_CTRL_SET_TIMEOUT);
 
+		/* Try to enable USB2 hardware LPM again */
+		if (udev->usb2_hw_lpm_capable == 1)
+			usb_set_usb2_hardware_lpm(udev, 1);
+
 		/* System sleep transitions should never fail */
 		if (!PMSG_IS_AUTO(msg))
 			status = 0;
@@ -2735,7 +2739,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
 	struct usb_hub	*hub = hdev_to_hub(udev->parent);
 	int		port1 = udev->portnum;
 	int		status;
-	u16		portchange, portstatus;
+	u16		portchange = 0, portstatus = 0;
 
 	/* Skip the initial Clear-Suspend step for a remote wakeup */
 	status = hub_port_status(hub, port1, &portstatus, &portchange);

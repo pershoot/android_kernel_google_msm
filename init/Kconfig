@@ -608,6 +608,14 @@ config CGROUP_FREEZER
 	  Provides a way to freeze and unfreeze all tasks in a
 	  cgroup.
 
+config CGROUP_TIMER_SLACK
+	bool "Timer slack cgroup controller"
+	help
+	  Provides a way to set minimal timer slack value for tasks in
+	  a cgroup.
+	  It's useful in mobile devices where certain background apps
+	  are attached to a cgroup and combined wakeups are desired.
+
 config CGROUP_DEVICE
 	bool "Device controller for cgroups"
 	help
@@ -939,13 +947,20 @@ source "usr/Kconfig"
 
 endif
 
-config CC_OPTIMIZE_FOR_SIZE
-	bool "Optimize for size"
-	help
-	  Enabling this option will pass "-Os" instead of "-O2" to gcc
-	  resulting in a smaller kernel.
+choice
+  prompt "Optimization level"
+  default CC_OPTIMIZE_DEFAULT
 
-	  If unsure, say Y.
+config CC_OPTIMIZE_FOR_SIZE
+	bool "Use -Os"
+
+config CC_OPTIMIZE_DEFAULT
+  	bool "Use -O2"
+
+config CC_OPTIMIZE_ALOT
+  	bool "Use -O3"
+
+endchoice
 
 config SYSCTL
 	bool

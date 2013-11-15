@@ -2165,6 +2165,33 @@ unsigned long nr_iowait(void)
 	return sum;
 }
 
+unsigned long avg_nr_running(void)
+{
+	unsigned long i, sum = 0;
+	unsigned int seqcnt, ave_nr_running;
+
+	for_each_online_cpu(i) {
+		struct rq *q = cpu_rq(i);
+
+		/*
+		 * Update average to avoid reading stalled value if there were
+		 * no run-queue changes for a long time. On the other hand if
+		 * the changes are happening right now, just read current value
+		 * directly.
+		 */
+		seqcnt = read_seqcount_begin(&q->ave_seqcnt);
+		ave_nr_running = do_avg_nr_running(q);
+		if (read_seqcount_retry(&q->ave_seqcnt, seqcnt)) {
+			read_seqcount_begin(&q->ave_seqcnt);
+			ave_nr_running = q->ave_nr_running;
+		}
+
+		sum += ave_nr_running;
+	}
+
+	return sum;
+}
+
 unsigned long nr_iowait_cpu(int cpu)
 {
 	struct rq *this = cpu_rq(cpu);
@@ -4926,7 +4953,7 @@ void show_state_filter(unsigned long state_filter)
 		debug_show_all_locks();
 }
 
-void __cpuinit init_idle_bootup_task(struct task_struct *idle)
+void init_idle_bootup_task(struct task_struct *idle)
 {
 	idle->sched_class = &idle_sched_class;
 }
@@ -4939,7 +4966,7 @@ void __cpuinit init_idle_bootup_task(struct task_struct *idle)
  * NOTE: this function does not set the idle thread's NEED_RESCHED
  * flag, to make booting more robust.
  */
-void __cpuinit init_idle(struct task_struct *idle, int cpu)
+void init_idle(struct task_struct *idle, int cpu)
 {
 	struct rq *rq = cpu_rq(cpu);
 	unsigned long flags;
@@ -5429,7 +5456,7 @@ static void set_rq_offline(struct rq *rq)
  * migration_call - callback that gets triggered when a CPU is added.
  * Here we can start up the necessary migration thread for the new CPU.
  */
-static int __cpuinit
+static int
 migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
 {
 	int cpu = (long)hcpu;
@@ -5482,12 +5509,12 @@ migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
  * happens before everything else.  This has to be lower priority than
  * the notifier in the perf_event subsystem, though.
  */
-static struct notifier_block __cpuinitdata migration_notifier = {
+static struct notifier_block migration_notifier = {
 	.notifier_call = migration_call,
 	.priority = CPU_PRI_MIGRATION,
 };
 
-static int __cpuinit sched_cpu_active(struct notifier_block *nfb,
+static int sched_cpu_active(struct notifier_block *nfb,
 				      unsigned long action, void *hcpu)
 {
 	switch (action & ~CPU_TASKS_FROZEN) {
@@ -5500,7 +5527,7 @@ static int __cpuinit sched_cpu_active(struct notifier_block *nfb,
 	}
 }
 
-static int __cpuinit sched_cpu_inactive(struct notifier_block *nfb,
+static int sched_cpu_inactive(struct notifier_block *nfb,
 					unsigned long action, void *hcpu)
 {
 	switch (action & ~CPU_TASKS_FROZEN) {

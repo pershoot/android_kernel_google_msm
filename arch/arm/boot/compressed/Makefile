@@ -10,20 +10,15 @@ OBJS		=
 # to minimise that number of bocks that have to be read in
 # order to load it.
 ifeq ($(CONFIG_ZBOOT_ROM_MMCIF),y)
+ifeq ($(CONFIG_ARCH_SH7372),y)
 OBJS		+= mmcif-sh7372.o
 endif
-
-# Ensure that SDHI loader code appears early in the image
-# to minimise that number of bocks that have to be read in
-# order to load it.
-ifeq ($(CONFIG_ZBOOT_ROM_SH_MOBILE_SDHI),y)
-OBJS		+= sdhi-shmobile.o
-OBJS		+= sdhi-sh7372.o
 endif
 
 AFLAGS_head.o += -DTEXT_OFFSET=$(TEXT_OFFSET)
-HEAD	= head.o
-OBJS	+= misc.o decompress.o
+HEAD  = head.o
+OBJS  += misc.o decompress.o
+
 FONTC	= $(srctree)/drivers/video/console/font_acorn_8x8.c
 
 # string library code (-Os is enforced to keep it much smaller)
@@ -130,7 +125,7 @@ asflags-y := -Wa,-march=all
 
 # Supply kernel BSS size to the decompressor via a linker symbol.
 KBSS_SZ = $(shell $(CROSS_COMPILE)size $(obj)/../../../../vmlinux | \
-		awk 'END{print $$3}')
+	awk 'END{print $$3}')
 LDFLAGS_vmlinux = --defsym _kernel_bss_size=$(KBSS_SZ)
 # Supply ZRELADDR to the decompressor via a linker symbol.
 ifneq ($(CONFIG_AUTO_ZRELADDR),y)
