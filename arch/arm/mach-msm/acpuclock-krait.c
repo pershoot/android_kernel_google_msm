@@ -1193,32 +1193,32 @@ static void apply_undervolting(void)
 {
 	if (uv_bin == 6) {
 		drv.acpu_freq_tbl[0].vdd_core = 725000;
-	        printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+	        printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 
 	if (uv_bin == 5) {
 		drv.acpu_freq_tbl[0].vdd_core = 750000;
-	        printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+	        printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 
 	if (uv_bin == 4) {
 		drv.acpu_freq_tbl[0].vdd_core = 775000;
-	        printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+	        printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 
 	if (uv_bin == 3) {
 		drv.acpu_freq_tbl[0].vdd_core = 800000;
-	        printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+	        printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 
 	if (uv_bin == 2) {
 		drv.acpu_freq_tbl[0].vdd_core = 825000;
-	        printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+	        printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 
 	if (uv_bin == 1) {
 		drv.acpu_freq_tbl[0].vdd_core = 850000;
-		printk(KERN_INFO "[elementalx]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
+		printk(KERN_INFO "[glitch]: min_voltage='%i'\n", drv.acpu_freq_tbl[0].vdd_core );
 	}
 }
 
