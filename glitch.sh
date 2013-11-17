@@ -81,6 +81,16 @@ cd release/aroma
 
 . $KERNEL_DIR/../rev
 
+if [ "$cm" = "y" ] ; then
+
+mkdir -p $KERNEL_DIR/release/Flashable-flo-AOSP4CM
+REL=Glitch-flo-r$counter-AOSP4CM.zip
+
+	zip -q -r ${REL} boot config META-INF system
+	#sha256sum ${REL} > ${REL}.sha256sum
+	mv ${REL}* $KERNEL_DIR/release/Flashable-flo-AOSP4CM/
+else
+
 counter=$((counter + 1))
 
 mkdir -p $KERNEL_DIR/release/Flashable-flo-AOSP
@@ -91,6 +101,8 @@ REL=Glitch-flo-r$counter.zip
 	mv ${REL}* $KERNEL_DIR/release/Flashable-flo-AOSP/
 
 echo counter=$counter > $KERNEL_DIR/../rev;
+
+fi
 
 rm boot/glitch.zImage
 rm -r system/lib/modules/*
@@ -114,7 +126,28 @@ else
 
 if [ "$1" = cleank ] ; then
     rm -fr "$KERNEL_DIR"/release/Flashable-flo-AOSP/*
+    rm -fr "$KERNEL_DIR"/release/Flashable-flo-AOSP4CM/*
     echo "Built kernels cleaned"
+
+else
+
+if [ "$1" = cm ] ; then
+
+cm="y"
+
+	git apply --reverse ../CMpatch
+    echo "--------------------------------------------------------"
+    echo "--------------Patched tree for CM compat----------------"
+    echo "--------------------------------------------------------"
+
+time {
+		build flo
+}
+
+	git apply ../CMpatch
+    echo "--------------------------------------------------------"
+    echo "---------------Patched tree back to AOSP----------------"
+    echo "--------------------------------------------------------"
 
 else
 
@@ -123,5 +156,6 @@ time {
     build flo
 
 }
+fi
 fi
 fi
