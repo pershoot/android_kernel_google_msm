@@ -4,7 +4,7 @@
 #
 # clean : clean the build directory.
 # cleank : clean the built kernel packages
-# aosp : build an aosp compatible kernel
+# cm : build a cm compatible kernel
 
 # CM repo path :
 repo=~/android/system
