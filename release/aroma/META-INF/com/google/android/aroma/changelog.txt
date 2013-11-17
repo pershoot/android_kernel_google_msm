@@ -1,4 +1,4 @@
-<b>Glitch kernel "AOSP" for flo</b>
+<b>Glitch kernel "AOSP" for N7 2013</b>
 
 - Based on AOSP 3.4.0 kernel source for MSM devices updated to linux 3.4.1
 - CPU OC up to 2.3Ghz with OV/UV support
