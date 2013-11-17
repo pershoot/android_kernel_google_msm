@@ -135,7 +135,7 @@ if [ "$1" = cm ] ; then
 
 cm="y"
 
-	git apply --reverse ../CMpatch
+	git apply ../AOSPpatch
     echo "--------------------------------------------------------"
     echo "--------------Patched tree for CM compat----------------"
     echo "--------------------------------------------------------"
@@ -144,7 +144,7 @@ time {
 		build flo
 }
 
-	git apply ../CMpatch
+	git apply --reverse ../AOSPpatch
     echo "--------------------------------------------------------"
     echo "---------------Patched tree back to AOSP----------------"
     echo "--------------------------------------------------------"
