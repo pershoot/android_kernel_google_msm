@@ -177,6 +177,15 @@ selectbox(
 endif;
 
 selectbox(
+  "Minimum CPU Frequency","Select minimum CPU frequency\n","@personalize","minfreq.prop",
+  "162MHz","",0,
+  "270MHz","",0,
+  "384MHz","(stock)",1,
+  "594MHz","",0,
+  "810MHz","",0
+);
+
+selectbox(
   "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose stock\n","@personalize","opt.prop",
   "stock","(1.13GHz-4.26GBps)",0,
   "improved","(1.19GHz-4.26GBps)",0,

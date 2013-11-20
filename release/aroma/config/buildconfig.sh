@@ -3,6 +3,22 @@
 #Build config file
 CONFIGFILE="/tmp/settings.conf"
 
+#MINFREQ
+MINF=`cat /tmp/aroma/minfreq.prop | cut -d '=' -f2`
+echo -e "\n\n##### Minimum frequency #####\n# 1 162 MHz" >> $CONFIGFILE
+echo -e "\n# 2 270 MHz\n# 3 384 MHz (stock)\n# 4 594 MHz\n# 5 810 MHz\n" >> $CONFIGFILE
+if [ $MINF = 2 ]; then
+  echo "MINF=2" >> $CONFIGFILE;
+elif [ $MINF = 3 ]; then
+  echo "MINF=3" >> $CONFIGFILE;
+elif [ $MINF = 4 ]; then
+  echo "MINF=4" >> $CONFIGFILE;
+elif [ $MINF = 5 ]; then
+  echo "MINF=5" >> $CONFIGFILE;
+else
+  echo "MINF=1" >> $CONFIGFILE;
+fi
+
 #S2W
 S2W=`grep "item.0.1" /tmp/aroma/mods.prop | cut -d '=' -f2`
 S2S=`grep "item.0.2" /tmp/aroma/mods.prop | cut -d '=' -f2`
