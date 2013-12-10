@@ -1006,12 +1006,8 @@ adreno_ringbuffer_issueibcmds(struct kgsl_device_private *dev_priv,
 	/* For now everybody has the same priority */
 	cmdbatch->priority = ADRENO_CONTEXT_DEFAULT_PRIORITY;
 
-	/*
-	 * Clear the wake on touch bit to indicate an IB has been submitted
-	 * since the last time we set it
-	 */
-
-	device->flags &= ~KGSL_FLAG_WAKE_ON_TOUCH;
+	/* wait for the suspend gate */
+	wait_for_completion(&device->cmdbatch_gate);
 
 	/* Queue the command in the ringbuffer */
 	ret = adreno_dispatcher_queue_cmd(adreno_dev, drawctxt, cmdbatch,
@@ -1154,12 +1150,14 @@ int adreno_ringbuffer_submitcmd(struct adreno_device *adreno_dev,
 					cmdbatch->timestamp);
 
 #ifdef CONFIG_MSM_KGSL_CFF_DUMP
+	if (ret)
+		goto done;
 	/*
 	 * insert wait for idle after every IB1
 	 * this is conservative but works reliably and is ok
 	 * even for performance simulations
 	 */
-	adreno_idle(device);
+	ret = adreno_idle(device);
 #endif
 
 done:
