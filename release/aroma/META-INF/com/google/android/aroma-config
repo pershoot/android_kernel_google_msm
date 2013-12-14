@@ -196,6 +196,13 @@ selectbox(
 );
 
 selectbox(
+  "Hotplug driver","Select default hotplug driver to use\n","@personalize","hotplug.prop",
+  "Qualcomm mpdecision","(stock)",0,
+  "Showp1984 msm_mpdecision","",1,
+  "Faux123 Intelli-plug","",0
+);
+
+selectbox(
   "Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability.\n","@personalize","uv.prop",
   "Stock (no undervolt)","",1,
   "Undervolt (850 min)","",0,
@@ -221,8 +228,8 @@ selectbox(
 
 selectbox(
   "Select Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
-  "4.3V","(100% - stock)",0,
-  "4.2V","(93% - balanced)",1,
+  "4.3V","(100% - stock)",1,
+  "4.2V","(93% - balanced)",0,
   "4.1V","(83% - conservative)",0,
   "4.0V","(73% - very conservative)",0
 );
@@ -231,8 +238,8 @@ checkbox(
   "Other settings","Select the mods you want to install\n","@personalize","mods.prop",
   "Sweep2Wake","Sweep across buttons to sleep/wake device",0,
   "Sweep2Sleep Only","Sweep across buttons to sleep device",1,
-  "S2W/DT2W power toggle","Makes the power button toggle s2w/dt2w",0,
-  "Shortsweep","Shorter sweep distance for Sweep2Wake",1,
+  "S2W/DT2W power toggle","Makes the power button toggle s2w/dt2w",1,
+  "Shortsweep","Shorter sweep distance for Sweep2Wake",0,
   "DoubleTap2Wake","Double tap screen to wake device",1,
   "Disable magnetic on/off","",0,
   "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0

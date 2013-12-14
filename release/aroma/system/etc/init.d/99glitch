@@ -50,6 +50,21 @@ echo 384000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
 echo Min CPU Frequency: 384000 >> $KERNEL_LOGFILE
 fi
 
+#Set HOTPLUGDRV
+if [ "`grep HOTPLUGDRV=1 $KERNEL_CONF`" ]; then
+  echo 1 > /sys/kernel/msm_mpdecision/conf/enabled;
+  echo 0 > /sys/module/intelli_plug/parameters/intelli_plug_active;
+  echo msm_mpdecision enabled >> $KERNEL_LOGFILE;
+elif [ "`grep HOTPLUGDRV=2 $KERNEL_CONF`" ]; then
+  echo 0 > /sys/kernel/msm_mpdecision/conf/enabled;
+  echo 1 > /sys/module/intelli_plug/parameters/intelli_plug_active;
+  echo intelli_plug enabled >> $KERNEL_LOGFILE;
+else
+  echo 0 > /sys/kernel/msm_mpdecision/conf/enabled;
+  echo 0 > /sys/module/intelli_plug/parameters/intelli_plug_active;
+  echo qualcomm_mpdecision enabled >> $KERNEL_LOGFILE;
+fi
+
 #Set SWEEP2WAKE
 if [ "`grep SWEEP2WAKE=0 $KERNEL_CONF`" ]; then
   echo 0 > /sys/android_touch/sweep2wake;

@@ -220,10 +220,35 @@ delete("/system/lib/modules/scsi_wait_scan.ko");
 set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 run_program("/tmp/systemcheck.sh");
 
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "1"
+     then
+   ui_print("Qualcomm mpdecision enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision_bck -> mpdecision");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility2.sh");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "2"
+     then
+   ui_print("Showp1984 msm_mpdecision enabled");
 ui_print("Renaming binaries...");
 ui_print("  /system/bin/mpdecision -> mpdecision_bck");
 ui_print("  /system/bin/thermald -> thermald_bck");
 run_program("/tmp/compatibility.sh");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "3"
+     then
+   ui_print("Faux123 Intelli-plug enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision -> mpdecision_bck");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility.sh");
+endif;
 
 ui_print("Installing system files");
 package_extract_dir("system", "/system");

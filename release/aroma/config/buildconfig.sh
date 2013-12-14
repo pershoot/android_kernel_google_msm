@@ -19,6 +19,18 @@ else
   echo "MINF=1" >> $CONFIGFILE;
 fi
 
+#HOTPLUGDRV
+HOTPLUGDRV=`cat /tmp/aroma/hotplug.prop | cut -d '=' -f2`
+echo -e "\n\n##### Hotplug driver Settings #####\n# 0 to enable qualcomm mpdecision (stock)" >> $CONFIGFILE
+echo -e "# 1 to enable msm_mpdecision (recommended)\n# 2 to enable intelli-plug\n" >> $CONFIGFILE
+if [ $HOTPLUGDRV = 2 ]; then
+  echo "HOTPLUGDRV=1" >> $CONFIGFILE;
+elif [ $HOTPLUGDRV = 3 ]; then
+  echo "HOTPLUGDRV=2" >> $CONFIGFILE;
+else
+  echo "HOTPLUGDRV=0" >> $CONFIGFILE;
+fi
+
 #S2W
 S2W=`grep "item.0.1" /tmp/aroma/mods.prop | cut -d '=' -f2`
 S2S=`grep "item.0.2" /tmp/aroma/mods.prop | cut -d '=' -f2`
