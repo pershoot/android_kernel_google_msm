@@ -116,6 +116,12 @@ config CPU_FREQ_DEFAULT_GOV_INTELLIDEMAND
 	help
 	  Use the CPUFreq governor 'intellidemand' as default.
 
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX
+	bool "smartmax"
+	select CPU_FREQ_GOV_SMARTMAX
+	help
+	  Use the CPUFreq governor 'smartmax' as default.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -189,6 +195,22 @@ config CPU_FREQ_GOV_INTERACTIVE
 	  For details, take a look at linux/Documentation/cpu-freq.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_SMARTMAX
+	tristate "'smartmax' cpufreq policy governor"
+	select CPU_FREQ_TABLE
+	help
+	  'smartmax' combined ondemand and smartass2
+
+config CPU_FREQ_GOV_SMARTMAX_EPS
+	tristate "'smartmax EPS' cpufreq policy governor"
+	select CPU_FREQ_TABLE
+	help
+	  'smartmax EPS' is the extreme powersaving version of smartmax
+
+config CPU_FREQ_GOV_SMARTMAX_M7
+	bool "'smartmax' defaults for m7"
+	depends on CPU_FREQ_GOV_SMARTMAX || CPU_FREQ_GOV_SMARTMAX_EPS
 
 config CPU_FREQ_GOV_CONSERVATIVE
 	tristate "'conservative' cpufreq governor"
