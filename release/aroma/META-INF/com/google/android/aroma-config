@@ -177,6 +177,16 @@ selectbox(
 endif;
 
 selectbox(
+  "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose stock\n","@personalize","opt.prop",
+  "stock","(1.13GHz-4.26GBps)",0,
+  "improved","(1.19GHz-4.26GBps)",0,
+  "balanced","(1.22GHz-4.66GBps)",1,
+  "fast","(1.35GHz-4.66GBps)",0,
+  "extreme","(1.43GHz-4.80GBps)",0,
+  "glitchy","(1.49GHz-4.96GBps)",0
+);
+
+selectbox(
   "Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability.\n","@personalize","uv.prop",
   "Stock (no undervolt)","",1,
   "Undervolt (850 min)","",0,
@@ -203,16 +213,6 @@ selectbox(
   "384MHz","(stock)",1,
   "594MHz","",0,
   "810MHz","",0
-);
-
-selectbox(
-  "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose stock\n","@personalize","opt.prop",
-  "stock","(1.13GHz-4.26GBps)",0,
-  "improved","(1.19GHz-4.26GBps)",0,
-  "balanced","(1.22GHz-4.66GBps)",1,
-  "fast","(1.35GHz-4.66GBps)",0,
-  "extreme","(1.43GHz-4.80GBps)",0,
-  "glitchy","(1.49GHz-4.96GBps)",0
 );
 
 selectbox(
