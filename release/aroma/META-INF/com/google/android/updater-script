@@ -198,6 +198,12 @@ if
    ui_print("OTG+Charge mode enabled");
 endif;
 
+if
+   file_getprop("/tmp/aroma/mods.prop","item.0.8") == "1"
+     then
+   ui_print("Input-boost enabled");
+endif;
+
 
 set_progress(0.3);
 

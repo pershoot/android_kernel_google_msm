@@ -242,7 +242,8 @@ checkbox(
   "Shortsweep","Shorter sweep distance for Sweep2Wake",0,
   "DoubleTap2Wake","Double tap screen to wake device",1,
   "Disable magnetic on/off","",0,
-  "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0
+  "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0,
+  "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1
 );
 
 if file_getprop("/tmp/aroma/mods.prop","item.0.1") == "1" && file_getprop("/tmp/aroma/mods.prop","item.0.2") == "1"

@@ -129,6 +129,15 @@ if [ "`grep OTGCM=1 $KERNEL_CONF`" ]; then
   echo USB OTG+Charge mode enabled >> $KERNEL_LOGFILE;
 fi
 
+#Input boost
+if [ "`grep INPUTBOOST=0 $KERNEL_CONF`" ]; then
+  echo 0 > /sys/kernel/msm_mpdecision/conf/boost_enabled;
+  echo Input-Boost disabled >> $KERNEL_LOGFILE;
+else
+  echo 1 > /sys/kernel/msm_mpdecision/conf/boost_enabled;
+  echo Input-Boost enabled >> $KERNEL_LOGFILE;
+fi
+
 #fstrim
 fstrim -v /cache | tee -a $KERNEL_LOGFILE;
 fstrim -v /data | tee -a $KERNEL_LOGFILE;
