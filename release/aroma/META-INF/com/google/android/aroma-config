@@ -177,6 +177,26 @@ selectbox(
 endif;
 
 selectbox(
+  "Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability.\n","@personalize","uv.prop",
+  "Stock (no undervolt)","",1,
+  "Undervolt (850 min)","",0,
+  "Undervolt (825 min)","",0,
+  "Undervolt (800 min)","",0,
+  "Undervolt (775 min)","",0,
+  "Undervolt (750 min)","",0,
+  "Undervolt (725 min)","",0
+);
+
+selectbox(
+  "My device is already Glitched","If you're already running Glitch kernel and you want to keep your actual settings, say yes\n","@personalize","glitched.prop",
+  "No","(Full install)",1,
+  "Yes","",0
+);
+
+if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
+then
+
+selectbox(
   "Minimum CPU Frequency","Select minimum CPU frequency\n","@personalize","minfreq.prop",
   "162MHz","",0,
   "270MHz","",0,
@@ -200,17 +220,6 @@ selectbox(
   "Qualcomm mpdecision","(stock)",0,
   "Showp1984 msm_mpdecision","",1,
   "Faux123 Intelli-plug","",0
-);
-
-selectbox(
-  "Auto Undervolting","Lowers the voltage for the lowest cpu frequency. Undervolting may cause instability.\n","@personalize","uv.prop",
-  "Stock (no undervolt)","",1,
-  "Undervolt (850 min)","",0,
-  "Undervolt (825 min)","",0,
-  "Undervolt (800 min)","",0,
-  "Undervolt (775 min)","",0,
-  "Undervolt (750 min)","",0,
-  "Undervolt (725 min)","",0
 );
 
 selectbox(
@@ -265,6 +274,20 @@ selectbox(
   "Portrait only","",0,
   "Landscape only","",0
 );
+endif;
+
+endif;
+
+if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2"
+then
+
+alert(
+  "WARNING:",
+  "You MUST already have Glitch kernel installed and running on this device or this will fail !",
+  "@alert",
+  "OK"
+);
+
 endif;
 
 menubox(
