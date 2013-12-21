@@ -132,8 +132,6 @@ void panic(const char *fmt, ...)
 	 */
 	crash_kexec(NULL);
 
-	kmsg_dump(KMSG_DUMP_PANIC);
-
 	/* print last_kmsg even after console suspend */
 	if (is_console_suspended())
 		resume_console();
@@ -144,6 +142,8 @@ void panic(const char *fmt, ...)
 	 * situation.
 	 */
 	smp_send_stop();
+
+	kmsg_dump(KMSG_DUMP_PANIC);
 
 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
 
