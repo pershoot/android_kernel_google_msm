@@ -1,10 +1,9 @@
 <b>Glitch kernel "AOSP" for N7 2013</b>
 
-- Based on AOSP 3.4.0 kernel source for MSM devices updated to linux 3.4.1
+- Based on AOSP 3.4.0 kernel source for MSM devices updated to linux 3.4.60
 - CPU OC up to 2.3Ghz with OV/UV support
 - L2/bus speed OC up to 1.49GHz / 4.96GBPS
 - GPU OC up to 627 MHz
-	- Faux Simple GPU governor support
 
 - CPU governors : Faux's intellidemand, interactive, ondemand
 - I/O schedulers: noop, deadline, row, cfq, fiops, sio

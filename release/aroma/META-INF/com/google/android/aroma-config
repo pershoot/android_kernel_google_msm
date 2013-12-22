@@ -230,13 +230,23 @@ selectbox(
 );
 
 selectbox(
-  "Select GPU governor","\n","@personalize","gpugov.prop",
-  "Ondemand","(stock)",1,
-  "Simple","",0
+  "GPU max frequency","Select the GPU's max frequency\n","@personalize","gpuclock.prop",
+  "320MHz","(powersaving)",0,
+  "450MHz","(improved)",1,
+  "504MHz","(balanced)",0,
+  "545MHz","(fast)",0,
+  "600MHz","(extreme)",0,
+  "627MHz","(glitchy)",0
 );
 
 selectbox(
-  "Select Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
+  "GPU governor","Select the GPU frequency scaling technique\n","@personalize","gpugov.prop",
+  "Ondemand","(stock)",1,
+  "Interactive","",0
+);
+
+selectbox(
+  "Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
   "4.3V","(100% - stock)",1,
   "4.2V","(93% - balanced)",0,
   "4.1V","(83% - conservative)",0,
@@ -252,7 +262,8 @@ checkbox(
   "DoubleTap2Wake","Double tap screen to wake device",1,
   "Disable magnetic on/off","",0,
   "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0,
-  "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1
+  "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
+  "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1
 );
 
 if file_getprop("/tmp/aroma/mods.prop","item.0.1") == "1" && file_getprop("/tmp/aroma/mods.prop","item.0.2") == "1"

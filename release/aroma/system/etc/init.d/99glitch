@@ -138,6 +138,15 @@ else
   echo Input-Boost enabled >> $KERNEL_LOGFILE;
 fi
 
+#Gentle Fair Sleepers
+if [ "`grep GFSLEEPERS=0 $KERNEL_CONF`" ]; then
+  echo 0 > /sys/kernel/sched/gentle_fair_sleepers;
+  echo Gentle Fair Sleepers disabled >> $KERNEL_LOGFILE;
+else
+  echo 1 > /sys/kernel/sched/gentle_fair_sleepers;
+  echo Gentle Fair Sleepers enabled >> $KERNEL_LOGFILE;
+fi
+
 #fstrim
 fstrim -v /cache | tee -a $KERNEL_LOGFILE;
 fstrim -v /data | tee -a $KERNEL_LOGFILE;
@@ -151,10 +160,31 @@ elif [ "`grep THERM=2 $KERNEL_CONF`" ]; then
   echo run hot >> $KERNEL_LOGFILE;
 fi
 
+#GPU Clock settings
+if [ "`grep GPU_OC=1 $KERNEL_CONF`" ]; then
+  echo 320000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 320MHz GPU >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_OC=3 $KERNEL_CONF`" ]; then
+  echo 504000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 504MHz GPU >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_OC=4 $KERNEL_CONF`" ]; then
+  echo 545000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 545MHz GPU >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_OC=5 $KERNEL_CONF`" ]; then
+  echo 600000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 600MHz GPU >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_OC=6 $KERNEL_CONF`" ]; then
+  echo 627000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 627MHz GPU >> $KERNEL_LOGFILE;
+else
+  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 450MHz GPU >> $KERNEL_LOGFILE;
+fi
+
 #GPU Governor settings
 if [ "`grep GPU_GOV=2 $KERNEL_CONF`" ]; then
-  echo simple > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
-  echo Simple GPU Governor >> $KERNEL_LOGFILE;
+  echo interactive > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
+  echo Interactive GPU Governor >> $KERNEL_LOGFILE;
 elif [ "`grep GPU_GOV=3 $KERNEL_CONF`" ]; then
   echo performance > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/pwrscale/trustzone/governor;
   echo Performance GPU Governor >> $KERNEL_LOGFILE;

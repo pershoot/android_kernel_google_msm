@@ -114,6 +114,15 @@ else
   echo "INPUTBOOST=0" >> $CONFIGFILE;
 fi
 
+#Gentle Fair Sleepers
+GFSLEEPERS=`grep "item.0.9" /tmp/aroma/mods.prop | cut -d '=' -f2`
+echo -e "\n\n##### Gentle Fair Sleepers Settings ######\n# 1 to enable\n# 0 to disable\n" >> $CONFIGFILE
+if [ $GFSLEEPERS = 1 ]; then
+  echo "GFSLEEPERS=1" >> $CONFIGFILE;
+else
+  echo "GFSLEEPERS=0" >> $CONFIGFILE;
+fi
+
 #THERMAL
 THERM=`cat /tmp/aroma/thermal.prop | cut -d '=' -f2`
 echo -e "\n\n##### Thermal Settings #####\n# 0 for default thermal throttling" >> $CONFIGFILE
@@ -126,10 +135,28 @@ else
   echo "THERM=0" >> $CONFIGFILE;
 fi
 
+#GPU Clock
+GPU_OC=`cat /tmp/aroma/gpuclock.prop | cut -d '=' -f2`
+echo -e "\n\n##### Max GPU Clock #####\n# 1 320 MHz" >> $CONFIGFILE
+echo -e "\n# 2 450 MHz\n# 3 504MHz\n# 4 545 MHz\n# 5 600 MHz\n# 6 627 MHz\n" >> $CONFIGFILE
+if [ $GPU_OC = 1 ]; then
+  echo "GPU_OC=1" >> $CONFIGFILE;
+elif [ $GPU_OC = 3 ]; then
+  echo "GPU_OC=3" >> $CONFIGFILE;
+elif [ $GPU_OC = 4 ]; then
+  echo "GPU_OC=4" >> $CONFIGFILE;
+elif [ $GPU_OC = 5 ]; then
+  echo "GPU_OC=5" >> $CONFIGFILE;
+elif [ $GPU_OC = 6 ]; then
+  echo "GPU_OC=6" >> $CONFIGFILE;
+else
+  echo "GPU_OC=2" >> $CONFIGFILE;
+fi
+
 #GPU Governor
 GPU_GOV=`cat /tmp/aroma/gpugov.prop | cut -d '=' -f2`
 echo -e "\n\n##### GPU Governor #####\n# 1 Ondemand (default)" >> $CONFIGFILE
-echo -e "\n# 2 Simple\n# 3 Performance\n" >> $CONFIGFILE
+echo -e "\n# 2 Interactive\n# 3 Performance\n" >> $CONFIGFILE
 if [ $GPU_GOV = 2 ]; then
   echo "GPU_GOV=2" >> $CONFIGFILE;
 else
