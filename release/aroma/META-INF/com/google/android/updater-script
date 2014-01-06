@@ -141,29 +141,35 @@ endif;
 if
    file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "2"
      then
-   ui_print("450 MHz GPU Clock");
+   ui_print("400 MHz GPU Clock");
 endif;
 
 if
    file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "3"
      then
-   ui_print("504 MHz GPU Clock");
+   ui_print("450 MHz GPU Clock");
 endif;
 
 if
    file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "4"
      then
-   ui_print("545 MHz GPU Clock");
+   ui_print("504 MHz GPU Clock");
 endif;
 
 if
    file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "5"
      then
-   ui_print("600 MHz GPU Clock");
+   ui_print("545 MHz GPU Clock");
 endif;
 
 if
    file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "6"
+     then
+   ui_print("600 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "7"
      then
    ui_print("627 MHz GPU Clock");
 endif;

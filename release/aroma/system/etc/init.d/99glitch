@@ -165,20 +165,23 @@ if [ "`grep GPU_OC=1 $KERNEL_CONF`" ]; then
   echo 320000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
   echo 320MHz GPU >> $KERNEL_LOGFILE;
 elif [ "`grep GPU_OC=3 $KERNEL_CONF`" ]; then
+  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 450MHz GPU >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_OC=4 $KERNEL_CONF`" ]; then
   echo 504000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
   echo 504MHz GPU >> $KERNEL_LOGFILE;
-elif [ "`grep GPU_OC=4 $KERNEL_CONF`" ]; then
+elif [ "`grep GPU_OC=5 $KERNEL_CONF`" ]; then
   echo 545000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
   echo 545MHz GPU >> $KERNEL_LOGFILE;
-elif [ "`grep GPU_OC=5 $KERNEL_CONF`" ]; then
+elif [ "`grep GPU_OC=6 $KERNEL_CONF`" ]; then
   echo 600000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
   echo 600MHz GPU >> $KERNEL_LOGFILE;
-elif [ "`grep GPU_OC=6 $KERNEL_CONF`" ]; then
+elif [ "`grep GPU_OC=7 $KERNEL_CONF`" ]; then
   echo 627000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
   echo 627MHz GPU >> $KERNEL_LOGFILE;
 else
-  echo 450000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
-  echo 450MHz GPU >> $KERNEL_LOGFILE;
+  echo 400000000 > /sys/devices/platform/kgsl-3d0.0/kgsl/kgsl-3d0/max_gpuclk;
+  echo 400MHz GPU >> $KERNEL_LOGFILE;
 fi
 
 #GPU Governor settings

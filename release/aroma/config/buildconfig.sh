@@ -138,7 +138,7 @@ fi
 #GPU Clock
 GPU_OC=`cat /tmp/aroma/gpuclock.prop | cut -d '=' -f2`
 echo -e "\n\n##### Max GPU Clock #####\n# 1 320 MHz" >> $CONFIGFILE
-echo -e "\n# 2 450 MHz\n# 3 504MHz\n# 4 545 MHz\n# 5 600 MHz\n# 6 627 MHz\n" >> $CONFIGFILE
+echo -e "\n# 2 400 MHz\n# 3 450 MHz\n# 4 504MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
 if [ $GPU_OC = 1 ]; then
   echo "GPU_OC=1" >> $CONFIGFILE;
 elif [ $GPU_OC = 3 ]; then
@@ -149,6 +149,8 @@ elif [ $GPU_OC = 5 ]; then
   echo "GPU_OC=5" >> $CONFIGFILE;
 elif [ $GPU_OC = 6 ]; then
   echo "GPU_OC=6" >> $CONFIGFILE;
+elif [ $GPU_OC = 7 ]; then
+  echo "GPU_OC=7" >> $CONFIGFILE;
 else
   echo "GPU_OC=2" >> $CONFIGFILE;
 fi

@@ -232,6 +232,7 @@ selectbox(
 selectbox(
   "GPU max frequency","Select the GPU's max frequency\n","@personalize","gpuclock.prop",
   "320MHz","(powersaving)",0,
+  "400MHz","(stock)",0,
   "450MHz","(improved)",1,
   "504MHz","(balanced)",0,
   "545MHz","(fast)",0,
