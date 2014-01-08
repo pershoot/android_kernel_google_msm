@@ -108,7 +108,9 @@ fi
 #Input-boost
 INPUTBOOST=`grep "item.0.8" /tmp/aroma/mods.prop | cut -d '=' -f2`
 echo -e "\n\n##### Input-booster Settings ######\n# 1 to enable Input-boost\n# 0 to disable Input-boost\n" >> $CONFIGFILE
-if [ $INPUTBOOST = 1 ]; then
+if [ $HOTPLUGDRV = 1 ]; then
+  echo "INPUTBOOST=0" >> $CONFIGFILE;
+elif [ $INPUTBOOST = 1 ]; then
   echo "INPUTBOOST=1" >> $CONFIGFILE;
 else
   echo "INPUTBOOST=0" >> $CONFIGFILE;
