@@ -13,7 +13,7 @@ repo=~/android/system
 export ARCH="arm"
 #export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
 #export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/linaro_4.8.2-2013.09/bin/arm-gnueabi-"
-export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/sabermod-androideabi-4.8/bin/arm-linux-androideabi-"
+export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/sabermod-androideabi-4.8.3/bin/arm-linux-androideabi-"
 
 setup ()
 {
