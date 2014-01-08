@@ -196,6 +196,30 @@ else
   echo Ondemand GPU Governor >> $KERNEL_LOGFILE;
 fi
 
+#GPU uV settings
+if [ "`grep GPU_UV=2 $KERNEL_CONF`" ]; then
+  printf "920000\n1025000\n1125000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -25mV GPU uV >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_UV=3 $KERNEL_CONF`" ]; then
+  printf "895000\n1000000\n1100000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -50mV GPU uV >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_UV=4 $KERNEL_CONF`" ]; then
+  printf "870000\n975000\n1075000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -75mV GPU uV >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_UV=5 $KERNEL_CONF`" ]; then
+  printf "845000\n950000\n1050000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -100mV GPU uV >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_UV=6 $KERNEL_CONF`" ]; then
+  printf "820000\n925000\n1025000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -125mV GPU uV >> $KERNEL_LOGFILE;
+elif [ "`grep GPU_UV=7 $KERNEL_CONF`" ]; then
+  printf "795000\n900000\n1000000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo -150mV GPU uV >> $KERNEL_LOGFILE;
+else
+  printf "945000\n1050000\n1150000\n" > /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels_GPU;
+  echo Stock GPU voltage >> $KERNEL_LOGFILE;
+fi
+
 #Battery life extender
 if [ "`grep BLE=2 $KERNEL_CONF`" ]; then
   echo 4200 > /sys/devices/i2c-0/0-006a/float_voltage

@@ -247,6 +247,17 @@ selectbox(
 );
 
 selectbox(
+  "GPU Undervolting","Lowers the GPU voltage for all steps. Undervolting may cause instability.\n","@personalize","gpuuv.prop",
+  "No undervolting","(stock)",1,
+  "Undervolt -25mV","",0,
+  "Undervolt -50mV","",0,
+  "Undervolt -75mV","",0,
+  "Undervolt -100mV","",0,
+  "Undervolt -125mV","",0,
+  "Undervolt -150mV","",0
+);
+
+selectbox(
   "Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
   "4.3V","(100% - stock)",1,
   "4.2V","(93% - balanced)",0,

@@ -167,6 +167,26 @@ else
   echo "GPU_GOV=1" >> $CONFIGFILE;
 fi
 
+#GPU UV
+GPU_UV=`cat /tmp/aroma/gpuuv.prop | cut -d '=' -f2`
+echo -e "\n\n##### GPU Undervolting #####\n# 1 Stock\n# 2 -25mV" >> $CONFIGFILE
+echo -e "\n# 3 -50mV\n# 4 -75mV\n# 5 -100mV\n# 6 -125mV\n# 7 -150mV\n" >> $CONFIGFILE
+if [ $GPU_UV = 2 ]; then
+  echo "GPU_UV=2" >> $CONFIGFILE;
+elif [ $GPU_UV = 3 ]; then
+  echo "GPU_UV=3" >> $CONFIGFILE;
+elif [ $GPU_UV = 4 ]; then
+  echo "GPU_UV=4" >> $CONFIGFILE;
+elif [ $GPU_UV = 5 ]; then
+  echo "GPU_UV=5" >> $CONFIGFILE;
+elif [ $GPU_UV = 6 ]; then
+  echo "GPU_UV=6" >> $CONFIGFILE;
+elif [ $GPU_UV = 7 ]; then
+  echo "GPU_UV=7" >> $CONFIGFILE;
+else
+  echo "GPU_UV=1" >> $CONFIGFILE;
+fi
+
 #Battery life extender
 BLE=`cat /tmp/aroma/ble.prop | cut -d '=' -f2`
 echo -e "\n\n##### Battery life eXtender #####\n# 1 4.3V (stock - 100%)" >> $CONFIGFILE

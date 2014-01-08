@@ -187,6 +187,42 @@ if
 endif;
 
 if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "2"
+     then
+   ui_print("-25mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "3"
+     then
+   ui_print("-50mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "4"
+     then
+   ui_print("-75mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "5"
+     then
+   ui_print("-100mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "6"
+     then
+   ui_print("-125mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "7"
+     then
+   ui_print("-150mV GPU uV");
+endif;
+
+if
    file_getprop("/tmp/aroma/ble.prop","selected.0") == "1"
      then
    ui_print("default charge voltage");
