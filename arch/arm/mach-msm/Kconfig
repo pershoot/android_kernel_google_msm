@@ -2661,13 +2661,13 @@ config FORCE_FAST_CHARGE
 
 config UPDATE_LCDC_LUT
 	bool "Set initial Qualcomm LCDC lut"
-	default y
+	default n
 	help
 	  Set initial Qualcomm LCDC Look Up Table.
 
-config LCD_KCAL
+config LCD_KCAL_STANDALONE
 	tristate "MSM generic LCDC Calibration"
-	default y
+	default n
 	help
 	  Enable MSM generic LCDC temperature Calibration.
 
