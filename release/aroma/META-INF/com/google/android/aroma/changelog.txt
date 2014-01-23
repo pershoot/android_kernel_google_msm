@@ -1,6 +1,6 @@
 <b>Glitch kernel "AOSP" for N7 2013</b>
 
-- Based on AOSP 3.4.0 kernel source for MSM devices updated to linux 3.4.60
+- Based on AOSP 3.4.0 kernel source for MSM devices updated to linux 3.4.77
 - CPU OC up to 2.3Ghz with OV/UV support
 - L2/bus speed OC up to 1.49GHz / 4.96GBPS
 - GPU OC up to 627 MHz
@@ -18,7 +18,7 @@
 - Magnetic on/off
 
 - FauxSound support
-- Panel color tweaking by Faux123
+- Panel color/gamma tweaking by Faux123
 - Dynamic Fsync by Faux123
 - USB fast charging support
 - USB OTG charge hack support by flar2
@@ -26,6 +26,6 @@
 - Optimized algorithms and libraries
 - Various performance and power saving tweaks
 - NTFS and exFAT support
-- Kexec-hardboot support
+- Kexec-hardboot (Multiboot) support
 
-- Compiled with latest SaberMod 4.8.x toolchain / -O3 (optimize a lot)
+- Compiled with latest SaberMod 4.8.3 toolchain with -O3 optimizations
