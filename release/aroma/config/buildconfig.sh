@@ -55,6 +55,8 @@ else
 fi
 
 #S2S_ORIENTATION
+if [ -f "/tmp/aroma/orientation.prop" ];
+then
 S2S_ORIENTATION=`cat /tmp/aroma/orientation.prop | cut -d '=' -f2`
 echo -e "\n\n##### S2S orientation Settings #####\n# 0 for both" >> $CONFIGFILE
 echo -e "# 1 for portrait only\n# 2 for landscape only\n" >> $CONFIGFILE
@@ -64,6 +66,11 @@ elif [ $S2S_ORIENTATION = 3 ]; then
   echo "S2S_ORIENTATION=2" >> $CONFIGFILE;
 else
   echo "S2S_ORIENTATION=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### S2S orientation Settings #####\n# 0 for both" >> $CONFIGFILE
+echo -e "# 1 for portrait only\n# 2 for landscape only\n" >> $CONFIGFILE
+echo "S2S_ORIENTATION=0" >> $CONFIGFILE;
 fi
 
 #Shortsweep
