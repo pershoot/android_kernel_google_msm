@@ -324,6 +324,15 @@ set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 run_program("/tmp/systemcheck.sh");
 
 if
+   file_getprop("/tmp/aroma/misc.prop","item.0.5") == "1"
+     then
+   ui_print("Qualcomm optimized Dalvik/Bionic installed");
+package_extract_dir("qo_db", "/system");
+set_perm(0, 2000, 0755, "/system/bin/dexopt");
+set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
+endif;
+
+if
    file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "1"
      then
    ui_print("Qualcomm mpdecision enabled");
