@@ -7,7 +7,6 @@ set_progress(0.1);
 if
    file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
      then
-
 if
    file_getprop("/tmp/aroma/opt.prop","selected.0") == "1"
      then
@@ -227,16 +226,19 @@ if
      then
    ui_print("default charge voltage");
 endif;
+
 if
    file_getprop("/tmp/aroma/ble.prop","selected.0") == "2"
      then
    ui_print("4.2V charge voltage");
 endif;
+
 if
    file_getprop("/tmp/aroma/ble.prop","selected.0") == "3"
      then
    ui_print("4.1V charge voltage");
 endif;
+
 if
    file_getprop("/tmp/aroma/ble.prop","selected.0") == "4"
      then
@@ -244,55 +246,55 @@ if
 endif;
 
 if
-    file_getprop("/tmp/aroma/mods.prop","item.0.1") == "1"
-then
-    ui_print("Sweep2wake enabled");
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.1") == "1"
+     then
+   ui_print("Sweep2wake enabled");
 endif;
 
 if
-    file_getprop("/tmp/aroma/mods.prop","item.0.2") == "1"
-then
-    ui_print("Sweep2sleep only");
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.2") == "1"
+     then
+   ui_print("Sweep2sleep only");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.3") == "1"
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.3") == "1"
      then
    ui_print("S2W/DT2W power toggle enabled");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.4") == "1"
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.4") == "1"
      then
    ui_print("Shortsweep enabled");
 endif;
 
 if
-    file_getprop("/tmp/aroma/mods.prop","item.0.5") == "1"
-then
-    ui_print("DoubleTap2Wake enabled");
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.5") == "1"
+     then
+   ui_print("DoubleTap2Wake enabled");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.6") == "1"
+   file_getprop("/tmp/aroma/misc.prop","item.0.1") == "1"
      then
    ui_print("Magnetic on/off disabled");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.7") == "1"
+   file_getprop("/tmp/aroma/misc.prop","item.0.2") == "1"
      then
    ui_print("OTG+Charge mode enabled");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.8") == "1"
+   file_getprop("/tmp/aroma/misc.prop","item.0.3") == "1"
      then
    ui_print("Input-boost enabled");
 endif;
 
 if
-   file_getprop("/tmp/aroma/mods.prop","item.0.9") == "1"
+   file_getprop("/tmp/aroma/misc.prop","item.0.4") == "1"
      then
    ui_print("Gentle Fair Sleepers enabled");
 endif;
@@ -313,6 +315,7 @@ delete("/system/etc/init.d/99glitch");
 delete("/system/etc/elementalx.conf");
 delete("/system/etc/glitch.conf");
 delete("/system/etc/settings.conf");
+delete("/system/etc/glitch-settings.conf");
 delete("/system/etc/init.d/99zram.sh");
 delete("/system/lib/modules/cpufreq_limit.ko");
 delete("/system/lib/modules/scsi_wait_scan.ko");
@@ -358,8 +361,8 @@ set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
 
 set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
 run_program("/tmp/buildconfig.sh");
-run_program("/tmp/busybox", "cp", "/tmp/settings.conf", "/system/etc/settings.conf");
-set_perm(0, 0, 0666, "/system/etc/settings.conf");
+run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glitch-settings.conf");
+set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
 
 endif;
 
