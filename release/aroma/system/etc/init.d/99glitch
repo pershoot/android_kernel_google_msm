@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-KERNEL_CONF="/system/etc/settings.conf"
+KERNEL_CONF="/system/etc/glitch-settings.conf"
 KERNEL_LOGFILE="/data/local/tmp/glitch-kernel.log"
 
 if [ -f $KERNEL_LOGFILE ]; then
@@ -92,8 +92,10 @@ fi
 #Set PWR_TOGGLE
 if [ "`grep PWR_TOGGLE=1 $KERNEL_CONF`" ]; then
   echo 1 > /sys/android_touch/pwrkey_suspend;
+  echo power_toggle enabled >> $KERNEL_LOGFILE;
 else
   echo 0 > /sys/android_touch/pwrkey_suspend;
+  echo power_toggle disabled >> $KERNEL_LOGFILE;
 fi
 
 #Set SHORTSWEEP
@@ -223,15 +225,20 @@ fi
 #Battery life extender
 if [ "`grep BLE=2 $KERNEL_CONF`" ]; then
   echo 4200 > /sys/devices/i2c-0/0-006a/float_voltage
+  echo 4.2V charge voltage >> $KERNEL_LOGFILE;
 elif [ "`grep BLE=3 $KERNEL_CONF`" ]; then
   echo 4100 > /sys/devices/i2c-0/0-006a/float_voltage
+  echo 4.1V charge voltage >> $KERNEL_LOGFILE;
 elif [ "`grep BLE=4 $KERNEL_CONF`" ]; then
   echo 4000 > /sys/devices/i2c-0/0-006a/float_voltage
+  echo 4.0V charge voltage >> $KERNEL_LOGFILE;
 else
   echo 4300 > /sys/devices/i2c-0/0-006a/float_voltage
+  echo Stock charge voltage >> $KERNEL_LOGFILE;
 fi
 
 #exFAT support
   insmod /system/lib/modules/exfat.ko
+  echo exFAT module loaded >> $KERNEL_LOGFILE;
 
 exit 0
