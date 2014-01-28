@@ -94,6 +94,7 @@ checkbox(
   "S2W/S2S/DT2W","Sweep to wake/sleep, Double tap to wake.",1,
   "Misc settings","BLE, OTG+charge hack, input-boost, etc.",1
 );
+endif;
 
 if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2" || file_getprop("/tmp/aroma/glitch.prop","item.0.1") == "1"
 then
@@ -121,7 +122,6 @@ selectbox(
   "2268MHz","",0,
   "2322MHz","(glitchy)",0
 );
-
 endif;
 
 if file_getprop("/tmp/aroma/cpuopt.prop","selected.0") == "2"
@@ -193,7 +193,6 @@ selectbox(
   "2268MHz","",0,
   "2322MHz","(glitchy)",0
 );
-
 endif;
 
 selectbox(
@@ -217,6 +216,9 @@ selectbox(
   "Undervolt (725 min)","",0
 );
 endif;
+
+if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
+then
 
 if file_getprop("/tmp/aroma/glitch.prop","item.0.2") == "1"
 then
