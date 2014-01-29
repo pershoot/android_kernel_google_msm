@@ -86,7 +86,7 @@ counter=$((counter + 1))
 mkdir -p $KERNEL_DIR/release/Flashable-flo-AOSP
 REL=Glitch-N7-r$counter.zip
 
-	zip -q -r ${REL} boot config META-INF system
+	zip -q -r ${REL} boot config META-INF qo_db system
 	#sha256sum ${REL} > ${REL}.sha256sum
 	mv ${REL}* $KERNEL_DIR/release/Flashable-flo-AOSP/
 
