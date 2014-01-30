@@ -9,6 +9,14 @@ fi
 
 echo $(date) >> $KERNEL_LOGFILE
 
+#Restore settings from sdcard
+if [ -f "/system/etc/restore.plz" ];
+then
+ cp /sdcard/glitch-settings.conf /system/etc/glitch-settings.conf 
+ echo "Your SDcard backup has been restored. You may need to reboot." >> $KERNEL_LOGFILE;
+ rm /system/etc/restore.plz
+fi
+
 #Max CPU_FREQ
 MAXF="`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq`"
 echo $MAXF > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq;
@@ -18,37 +26,12 @@ echo $MAXF > /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq;
 echo Max CPU Frequency: $MAXF >> $KERNEL_LOGFILE
 
 #Min CPU_FREQ
-if [ "`grep MINF=1 $KERNEL_CONF`" ]; then
-echo 162000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
-echo 162000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
-echo 162000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
-echo 162000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
-echo Min CPU Frequency: 162000 >> $KERNEL_LOGFILE
-elif [ "`grep MINF=2 $KERNEL_CONF`" ]; then
-echo 270000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
-echo 270000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
-echo 270000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
-echo 270000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
-echo Min CPU Frequency: 270000 >> $KERNEL_LOGFILE
-elif [ "`grep MINF=4 $KERNEL_CONF`" ]; then
-echo 594000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
-echo 594000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
-echo 594000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
-echo 594000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
-echo Min CPU Frequency: 594000 >> $KERNEL_LOGFILE
-elif [ "`grep MINF=5 $KERNEL_CONF`" ]; then
-echo 810000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
-echo 810000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
-echo 810000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
-echo 810000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
-echo Min CPU Frequency: 810000 >> $KERNEL_LOGFILE
-else
-echo 384000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
-echo 384000 > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
-echo 384000 > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
-echo 384000 > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
-echo Min CPU Frequency: 384000 >> $KERNEL_LOGFILE
-fi
+MINF="`cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq`"
+echo $MINF > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq; 
+echo $MINF > /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq;
+echo $MINF > /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq;
+echo $MINF > /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq;
+echo Min CPU Frequency: $MINF >> $KERNEL_LOGFILE
 
 #Set HOTPLUGDRV
 if [ "`grep HOTPLUGDRV=1 $KERNEL_CONF`" ]; then
@@ -240,5 +223,9 @@ fi
 #exFAT support
   insmod /system/lib/modules/exfat.ko
   echo exFAT module loaded >> $KERNEL_LOGFILE;
+
+#Backup settings to sdcard
+ cp /system/etc/glitch-settings.conf /sdcard/glitch-settings.conf
+ echo "A backup of your settings has been created on sdcard root" >> $KERNEL_LOGFILE;
 
 exit 0

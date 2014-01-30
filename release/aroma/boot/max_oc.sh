@@ -184,10 +184,31 @@ case $val3 in
 	  ;;
 esac
 
-#set optimization level
-val4=$(cat /tmp/aroma-data/opt.prop | cut -d '=' -f2)
+#set min_clock
+val4=$(cat /tmp/aroma-data/minfreq.prop | cut -d '=' -f2)
 
 case $val4 in
+	1)
+	  min_clock="min_clock=162000"
+	  ;;
+	2)
+	  min_clock="min_clock=270000"
+	  ;;
+	3)
+	  min_clock="min_clock=384000"
+	  ;;
+	4)
+	  min_clock="min_clock=594000"
+	  ;;
+  	5)
+	  min_clock="min_clock=810000"
+	  ;;
+esac
+
+#set optimization level
+val5=$(cat /tmp/aroma-data/opt.prop | cut -d '=' -f2)
+
+case $val5 in
 	1)
 	  l2_opt="l2_opt=0"
 	  ;;
@@ -209,9 +230,9 @@ case $val4 in
 esac
 
 #set undervolting
-val7=$(cat /tmp/aroma-data/uv.prop | cut -d '=' -f2)
+val6=$(cat /tmp/aroma-data/uv.prop | cut -d '=' -f2)
 
-case $val7 in
+case $val6 in
 	1)
 	  vdd_uv="vdd_uv=0"
 	  ;;
@@ -237,4 +258,4 @@ esac
 
 null="abc"
 
-echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=flo user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3" $l2_opt $vdd_uv $max_oc0 $max_oc1 $max_oc2 $max_oc3 $null >> /tmp/cmdline.cfg
+echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=flo user_debug=31 msm_rtb.filter=0x3F ehci-hcd.park=3" $l2_opt $vdd_uv $max_oc0 $max_oc1 $max_oc2 $max_oc3 $min_clock $null >> /tmp/cmdline.cfg

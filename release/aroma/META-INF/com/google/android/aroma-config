@@ -79,15 +79,15 @@ alert(
 selectbox(
   "Keep your Glitch settings ?","New user? Coming back? Already using this kernel?\n","@personalize","glitched.prop",
   "I want to make a complete installation, please.","(wipes previous Glitch settings if any)",1,
-  "I'm already Glitch'd you know, just try to keep my settings, thx.","",0
+  "I'm already Glitch'd, just try to keep my settings, thx.","",0
 );
 
 if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
 then
 checkbox(
   "Advanced personnalization","Select all the settings to tweak next. Unticked means stock settings will be applied.\n","@personalize","glitch.prop",
-  "CPU/BUS OC & uV settings","Max CPU/BUS clock and 162MHz frequency uV",1,
-  "Minimum CPU frequency","Lower for more battery life, higher for smooth audio on screen off.",1,
+  "CPU/BUS OC","Max CPU/BUS clock and 162MHz frequency uV",1,
+  "Minimum CPU frequency & uV","Lower for more battery life, higher for smooth audio on screen off.",1,
   "Hotplug driver","CPU cores management.",1,
   "Thermal settings","Temperature treshold before downclocking.",1,
   "GPU settings","Max GPU clock, governor, uV.",1,
@@ -96,7 +96,23 @@ checkbox(
 );
 endif;
 
-if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2" || file_getprop("/tmp/aroma/glitch.prop","item.0.1") == "1"
+if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2"
+then
+alert(
+  "WARNING:",
+  "You MUST already have either Glitch kernel installed and running on this device or a backup of your settings on your SDcard root. Else, stock settings will be enforced.",
+  "@alert",
+  "OK"
+);
+
+checkbox(
+  "Glitched already ?","You may want to reinstall optimized libraries or restore your settings. Tick what you want.\n","@personalize","galready.prop",
+  "Install/Restore Qualcomm optimized libraries","In case of rom update. Safe to overwrite.",1,
+  "Restore your settings from SDcard","If you have a glitch-settings.conf backup from a previous installation (on SDcard root)",0
+);
+endif;
+
+if file_getprop("/tmp/aroma/glitch.prop","item.0.1") == "1"
 then
 selectbox(
   "Set each CPU core separately","If you say yes here you will have the option to set the max freq for each core individually\n","@personalize","cpuopt.prop",
@@ -196,7 +212,7 @@ selectbox(
 endif;
 
 selectbox(
-  "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose stock\n","@personalize","opt.prop",
+  "Select CPU optimization level","Overclocks L2 cache and bus bandwidth. If you experience instability, choose a lower value\n","@personalize","opt.prop",
   "stock","(1.13GHz-4.26GBps)",0,
   "improved","(1.19GHz-4.26GBps)",1,
   "balanced","(1.22GHz-4.66GBps)",0,
@@ -204,21 +220,7 @@ selectbox(
   "extreme","(1.43GHz-4.80GBps)",0,
   "glitchy","(1.49GHz-4.96GBps)",0
 );
-
-selectbox(
-  "Auto Undervolting","Lowers the voltage for the lowest cpu frequency (162MHz). Undervolting may cause instability.\n","@personalize","uv.prop",
-  "Stock (950 min)","",0,
-  "Undervolt (850 min)","",1,
-  "Undervolt (825 min)","",0,
-  "Undervolt (800 min)","",0,
-  "Undervolt (775 min)","",0,
-  "Undervolt (750 min)","",0,
-  "Undervolt (725 min)","",0
-);
 endif;
-
-if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
-then
 
 if file_getprop("/tmp/aroma/glitch.prop","item.0.2") == "1"
 then
@@ -230,6 +232,17 @@ selectbox(
   "384MHz","(stock)",1,
   "594MHz","",0,
   "810MHz","",0
+);
+
+selectbox(
+  "Auto Undervolting","Lowers the voltage for the lowest cpu frequency you just set. Undervolting may cause instability.\n","@personalize","uv.prop",
+  "No undervolting","(Stock)",0,
+  "Undervolt -50 mV","",1,
+  "Undervolt -75 mV","",0,
+  "Undervolt -100 mV","",0,
+  "Undervolt -125 mV","",0,
+  "Undervolt -150 mV","",0,
+  "Undervolt -175 mV","",0
 );
 endif;
 
@@ -335,18 +348,6 @@ checkbox(
   "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
   "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1,
   "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",1
-);
-endif;
-
-endif;
-
-if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2"
-then
-alert(
-  "WARNING:",
-  "You MUST already have Glitch kernel installed and running on this device or default settings will be enforced !",
-  "@alert",
-  "OK"
 );
 endif;
 
