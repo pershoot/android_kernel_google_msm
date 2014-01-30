@@ -86,7 +86,7 @@ if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
 then
 checkbox(
   "Advanced personnalization","Select all the settings to tweak next. Unticked means stock settings will be applied.\n","@personalize","glitch.prop",
-  "CPU/BUS OC","Max CPU/BUS clock and 162MHz frequency uV",1,
+  "CPU/BUS OC","Max CPU and bus clocks",1,
   "Minimum CPU frequency & uV","Lower for more battery life, higher for smooth audio on screen off.",1,
   "Hotplug driver","CPU cores management.",1,
   "Thermal settings","Temperature treshold before downclocking.",1,
