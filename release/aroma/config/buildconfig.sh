@@ -2,28 +2,15 @@
 
 #Build config file
 CONFIGFILE="/tmp/glitch-settings.conf"
+RESTORE_BACKUP="/tmp/restore.plz"
 
-#MINFREQ
-if [ -f "/tmp/aroma/minfreq.prop" ];
+#Restore SDcard backup
+if [ -f "/tmp/aroma/galready.prop" ];
 then
-MINF=`cat /tmp/aroma/minfreq.prop | cut -d '=' -f2`
-echo -e "\n\n##### Minimum frequency #####\n# 1 162 MHz" >> $CONFIGFILE
-echo -e "# 2 270 MHz\n# 3 384 MHz (stock)\n# 4 594 MHz\n# 5 810 MHz\n" >> $CONFIGFILE
-if [ $MINF = 1 ]; then
-  echo "MINF=1" >> $CONFIGFILE;
-elif [ $MINF = 2 ]; then
-  echo "MINF=2" >> $CONFIGFILE;
-elif [ $MINF = 4 ]; then
-  echo "MINF=4" >> $CONFIGFILE;
-elif [ $MINF = 5 ]; then
-  echo "MINF=5" >> $CONFIGFILE;
-else
-  echo "MINF=3" >> $CONFIGFILE;
+RESTORE=`grep "item.0.2" /tmp/aroma/galready.prop | cut -d '=' -f2`
+if [ $RESTORE = 1 ]; then
+  echo "RESTORE MY BACKUP PLZ" >> $RESTORE_BACKUP;
 fi
-else
-echo -e "\n\n##### Minimum frequency #####\n# 1 162 MHz" >> $CONFIGFILE
-echo -e "# 2 270 MHz\n# 3 384 MHz (stock)\n# 4 594 MHz\n# 5 810 MHz\n" >> $CONFIGFILE
-echo "MINF=3" >> $CONFIGFILE;
 fi
 
 #HOTPLUGDRV
@@ -223,7 +210,7 @@ if [ -f "/tmp/aroma/gpuclock.prop" ];
 then
 GPU_OC=`cat /tmp/aroma/gpuclock.prop | cut -d '=' -f2`
 echo -e "\n\n##### Max GPU Clock #####\n# 1 320 MHz" >> $CONFIGFILE
-echo -e "# 2 400 MHz\n# 3 450 MHz\n# 4 504MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
+echo -e "# 2 400 MHz\n# 3 450 MHz\n# 4 504 MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
 if [ $GPU_OC = 1 ]; then
   echo "GPU_OC=1" >> $CONFIGFILE;
 elif [ $GPU_OC = 3 ]; then
@@ -241,7 +228,7 @@ else
 fi
 else
 echo -e "\n\n##### Max GPU Clock #####\n# 1 320 MHz" >> $CONFIGFILE
-echo -e "# 2 400 MHz\n# 3 450 MHz\n# 4 504MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
+echo -e "# 2 400 MHz\n# 3 450 MHz\n# 4 504 MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
 echo "GPU_OC=2" >> $CONFIGFILE;
 fi
 
@@ -308,6 +295,231 @@ else
 echo -e "\n\n##### Battery life eXtender #####\n# 1 4.3V (stock - 100%)" >> $CONFIGFILE
 echo -e "# 2 4.2V (balanced - 93%)\n# 3 4.1V (conservative - 83%)\n# 4 4.0V (very conservative - 73%)\n" >> $CONFIGFILE
 echo "BLE=1" >> $CONFIGFILE;
+fi
+
+echo -e "\n\n##############################################################" >> $CONFIGFILE
+echo -e "\n\n!!! Don't edit past this unless you know what you're doing !!!" >> $CONFIGFILE
+echo -e "          These are a backup of initialization settings           " >> $CONFIGFILE
+echo -e "\n\n##############################################################" >> $CONFIGFILE
+
+if [ ! -e /tmp/aroma-data/freq1.prop ]; then
+	cp /tmp/aroma-data/freq0.prop /tmp/aroma-data/freq1.prop;
+	cp /tmp/aroma-data/freq0.prop /tmp/aroma-data/freq2.prop;
+	cp /tmp/aroma-data/freq0.prop /tmp/aroma-data/freq3.prop;
+fi
+
+#MAXFREQ
+if [ -f "/tmp/aroma/freq0.prop" ];
+then
+MAXF_CPU0=`cat /tmp/aroma/freq0.prop | cut -d '=' -f2`
+echo -e "\n\n##### Maximum CPU0 frequency (MHz) #####\n" >> $CONFIGFILE
+if [ $MAXF_CPU0 = 2 ]; then
+  echo "MAXF_CPU0=1620" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 3 ]; then
+  echo "MAXF_CPU0=1728" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 4 ]; then
+  echo "MAXF_CPU0=1836" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 5 ]; then
+  echo "MAXF_CPU0=1890" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 6 ]; then
+  echo "MAXF_CPU0=1944" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 7 ]; then
+  echo "MAXF_CPU0=1998" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 8 ]; then
+  echo "MAXF_CPU0=2052" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 9 ]; then
+  echo "MAXF_CPU0=2106" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 10 ]; then
+  echo "MAXF_CPU0=2160" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 11 ]; then
+  echo "MAXF_CPU0=2214" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 12 ]; then
+  echo "MAXF_CPU0=2268" >> $CONFIGFILE;
+elif [ $MAXF_CPU0 = 13 ]; then
+  echo "MAXF_CPU0=2322" >> $CONFIGFILE;
+else
+  echo "MAXF_CPU0=1512" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Maximum CPU0 frequency (MHz) #####\n" >> $CONFIGFILE
+echo "MAXF_CPU0=1512" >> $CONFIGFILE;
+fi
+
+if [ -f "/tmp/aroma/freq1.prop" ];
+then
+MAXF_CPU1=`cat /tmp/aroma/freq1.prop | cut -d '=' -f2`
+echo -e "\n\n##### Maximum CPU1 frequency (MHz) #####\n" >> $CONFIGFILE
+if [ $MAXF_CPU1 = 2 ]; then
+  echo "MAXF_CPU1=1620" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 3 ]; then
+  echo "MAXF_CPU1=1728" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 4 ]; then
+  echo "MAXF_CPU1=1836" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 5 ]; then
+  echo "MAXF_CPU1=1890" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 6 ]; then
+  echo "MAXF_CPU1=1944" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 7 ]; then
+  echo "MAXF_CPU1=1998" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 8 ]; then
+  echo "MAXF_CPU1=2052" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 9 ]; then
+  echo "MAXF_CPU1=2106" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 10 ]; then
+  echo "MAXF_CPU1=2160" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 11 ]; then
+  echo "MAXF_CPU1=2214" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 12 ]; then
+  echo "MAXF_CPU1=2268" >> $CONFIGFILE;
+elif [ $MAXF_CPU1 = 13 ]; then
+  echo "MAXF_CPU1=2322" >> $CONFIGFILE;
+else
+  echo "MAXF_CPU1=1512" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Maximum CPU1 frequency (MHz) #####\n" >> $CONFIGFILE
+echo "MAXF_CPU1=1512" >> $CONFIGFILE;
+fi
+
+if [ -f "/tmp/aroma/freq2.prop" ];
+then
+MAXF_CPU2=`cat /tmp/aroma/freq2.prop | cut -d '=' -f2`
+echo -e "\n\n##### Maximum CPU2 frequency (MHz) #####\n" >> $CONFIGFILE
+if [ $MAXF_CPU2 = 2 ]; then
+  echo "MAXF_CPU2=1620" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 3 ]; then
+  echo "MAXF_CPU2=1728" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 4 ]; then
+  echo "MAXF_CPU2=1836" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 5 ]; then
+  echo "MAXF_CPU2=1890" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 6 ]; then
+  echo "MAXF_CPU2=1944" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 7 ]; then
+  echo "MAXF_CPU2=1998" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 8 ]; then
+  echo "MAXF_CPU2=2052" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 9 ]; then
+  echo "MAXF_CPU2=2106" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 10 ]; then
+  echo "MAXF_CPU2=2160" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 11 ]; then
+  echo "MAXF_CPU2=2214" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 12 ]; then
+  echo "MAXF_CPU2=2268" >> $CONFIGFILE;
+elif [ $MAXF_CPU2 = 13 ]; then
+  echo "MAXF_CPU2=2322" >> $CONFIGFILE;
+else
+  echo "MAXF_CPU2=1512" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Maximum CPU2 frequency (MHz) #####\n" >> $CONFIGFILE
+echo "MAXF_CPU2=1512" >> $CONFIGFILE;
+fi
+
+if [ -f "/tmp/aroma/freq3.prop" ];
+then
+MAXF_CPU3=`cat /tmp/aroma/freq3.prop | cut -d '=' -f2`
+echo -e "\n\n##### Maximum CPU3 frequency (MHz) #####\n" >> $CONFIGFILE
+if [ $MAXF_CPU3 = 2 ]; then
+  echo "MAXF_CPU3=1620" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 3 ]; then
+  echo "MAXF_CPU3=1728" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 4 ]; then
+  echo "MAXF_CPU3=1836" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 5 ]; then
+  echo "MAXF_CPU3=1890" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 6 ]; then
+  echo "MAXF_CPU3=1944" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 7 ]; then
+  echo "MAXF_CPU3=1998" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 8 ]; then
+  echo "MAXF_CPU3=2052" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 9 ]; then
+  echo "MAXF_CPU3=2106" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 10 ]; then
+  echo "MAXF_CPU3=2160" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 11 ]; then
+  echo "MAXF_CPU3=2214" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 12 ]; then
+  echo "MAXF_CPU3=2268" >> $CONFIGFILE;
+elif [ $MAXF_CPU3 = 13 ]; then
+  echo "MAXF_CPU3=2322" >> $CONFIGFILE;
+else
+  echo "MAXF_CPU3=1512" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Maximum CPU3 frequency (MHz) #####\n" >> $CONFIGFILE
+echo "MAXF_CPU3=1512" >> $CONFIGFILE;
+fi
+
+#MINFREQ
+if [ -f "/tmp/aroma/minfreq.prop" ];
+then
+MINF=`cat /tmp/aroma/minfreq.prop | cut -d '=' -f2`
+echo -e "\n\n##### Minimum CPU frequency (MHz) #####\n" >> $CONFIGFILE
+if [ $MINF = 1 ]; then
+  echo "MINF=162" >> $CONFIGFILE;
+elif [ $MINF = 2 ]; then
+  echo "MINF=270" >> $CONFIGFILE;
+elif [ $MINF = 4 ]; then
+  echo "MINF=595" >> $CONFIGFILE;
+elif [ $MINF = 5 ]; then
+  echo "MINF=810" >> $CONFIGFILE;
+else
+  echo "MINF=384" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Minimum CPU frequency (MHz) #####\n" >> $CONFIGFILE
+echo "MINF=384" >> $CONFIGFILE;
+fi
+
+#UV
+if [ -f "/tmp/aroma/uv.prop" ];
+then
+UV_LEVEL=`cat /tmp/aroma/uv.prop | cut -d '=' -f2`
+echo -e "\n\n##### Level of uV to apply to min frequency #####\n" >> $CONFIGFILE
+if [ $UV_LEVEL = 2 ]; then
+  echo "UV_LEVEL=1" >> $CONFIGFILE;
+elif [ $UV_LEVEL = 3 ]; then
+  echo "UV_LEVEL=2" >> $CONFIGFILE;
+elif [ $UV_LEVEL = 4 ]; then
+  echo "UV_LEVEL=3" >> $CONFIGFILE;
+elif [ $UV_LEVEL = 5 ]; then
+  echo "UV_LEVEL=4" >> $CONFIGFILE;
+elif [ $UV_LEVEL = 6 ]; then
+  echo "UV_LEVEL=5" >> $CONFIGFILE;
+elif [ $UV_LEVEL = 7 ]; then
+  echo "UV_LEVEL=6" >> $CONFIGFILE;
+else
+  echo "UV_LEVEL=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Level of uV to apply to min frequency #####\n" >> $CONFIGFILE
+echo "UV_LEVEL=0" >> $CONFIGFILE;
+fi
+
+#L2/CACHE OC
+if [ -f "/tmp/aroma/opt.prop" ];
+then
+L2_OC=`cat /tmp/aroma/opt.prop | cut -d '=' -f2`
+echo -e "\n\n##### L2/cache OC settings #####\n" >> $CONFIGFILE
+if [ $L2_OC = 2 ]; then
+  echo "L2_OC=1" >> $CONFIGFILE;
+elif [ $L2_OC = 3 ]; then
+  echo "L2_OC=2" >> $CONFIGFILE;
+elif [ $L2_OC = 4 ]; then
+  echo "L2_OC=3" >> $CONFIGFILE;
+elif [ $L2_OC = 5 ]; then
+  echo "L2_OC=4" >> $CONFIGFILE;
+elif [ $L2_OC = 6 ]; then
+  echo "L2_OC=5" >> $CONFIGFILE;
+else
+  echo "L2_OC=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Level of uV to apply to min frequency #####\n" >> $CONFIGFILE
+echo "L2_OC=0" >> $CONFIGFILE;
 fi
 
 echo -e "\n\n##############################" >> $CONFIGFILE

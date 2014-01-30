@@ -373,6 +373,15 @@ run_program("/tmp/buildconfig.sh");
 run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glitch-settings.conf");
 set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
 
+package_extract_dir("boot", "/tmp");
+set_perm(0, 0, 0777, "/tmp/max_oc.sh");
+set_perm(0, 0, 0777, "/tmp/edit_ramdisk.sh");
+set_perm(0, 0, 0777, "/tmp/abootimg");
+
+ui_print("Applying init settings");
+run_program("/tmp/busybox", "dd", "if=/dev/block/mmcblk0p14", "of=/tmp/boot.img");
+run_program("/tmp/abootimg", "-x", "/tmp/boot.img", "/tmp/bootimg.cfg", "/tmp/zImage", "/tmp/initrd.img");
+run_program("/tmp/max_oc.sh");
 endif;
 
 if
@@ -389,27 +398,46 @@ ui_print("Installing system files to be a good boy.");
 package_extract_dir("system", "/system");
 set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
 
+if
+   file_getprop("/tmp/aroma/galready.prop","item.0.2") == "1"
+     then
+   ui_print("Pray Cthulhu to get your settings backup in place..");
+   ui_print("He may need another reboot to do it as your device is too fast now !");
+run_program("/tmp/busybox", "cp", "/tmp/restore.plz", "/system/etc/restore.plz");
+set_perm(0, 0, 0666, "/system/etc/restore.plz");
+endif;
+
 ui_print("Do some useless cleaning in case something didn't went wrong...");
 delete("/system/lib/modules/cpufreq_limit.ko");
 delete("/system/lib/modules/scsi_wait_scan.ko");
 
-ui_print("Try not to destroy your old settings.. too much.");
-
 set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 run_program("/tmp/systemcheck.sh");
 
+if
+   file_getprop("/tmp/aroma/galready.prop","item.0.1") == "1"
+     then
+   ui_print("Optimize some stuff because it's nice.");
+package_extract_dir("qo_db", "/system");
+set_perm(0, 2000, 0755, "/system/bin/dexopt");
+set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
 endif;
 
-set_progress(0.6);
+ui_print("Try not to destroy your other settings.. too much.");
 
 package_extract_dir("boot", "/tmp");
-set_perm(0, 0, 0777, "/tmp/max_oc.sh");
+set_perm(0, 0, 0777, "/tmp/restore.sh");
 set_perm(0, 0, 0777, "/tmp/edit_ramdisk.sh");
 set_perm(0, 0, 0777, "/tmp/abootimg");
 
 run_program("/tmp/busybox", "dd", "if=/dev/block/mmcblk0p14", "of=/tmp/boot.img");
 run_program("/tmp/abootimg", "-x", "/tmp/boot.img", "/tmp/bootimg.cfg", "/tmp/zImage", "/tmp/initrd.img");
-run_program("/tmp/max_oc.sh");
+run_program("/tmp/restore.sh");
+
+endif;
+
+set_progress(0.6);
+
 run_program("/tmp/edit_ramdisk.sh");
 run_program("/tmp/abootimg", "-u", "/tmp/boot.img", "-f", "/tmp/cmdline.cfg", "-k", "/tmp/glitch.zImage", "-r", "/tmp/initrd.img");
 
