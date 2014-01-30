@@ -12,7 +12,8 @@ echo $(date) >> $KERNEL_LOGFILE
 #Restore settings from sdcard
 if [ -f "/system/etc/restore.plz" ];
 then
- cp /sdcard/glitch-settings.conf /system/etc/glitch-settings.conf 
+ cp /sdcard/glitch-settings.conf /system/etc/glitch-settings.conf
+ chmod 666 /system/etc/glitch-settings.conf
  echo "Your SDcard backup has been restored. You may need to reboot." >> $KERNEL_LOGFILE;
  rm /system/etc/restore.plz
 fi
