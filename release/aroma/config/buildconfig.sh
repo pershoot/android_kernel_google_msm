@@ -518,7 +518,7 @@ else
   echo "L2_OC=0" >> $CONFIGFILE;
 fi
 else
-echo -e "\n\n##### Level of uV to apply to min frequency #####\n" >> $CONFIGFILE
+echo -e "\n\n##### L2/cache OC settings #####\n" >> $CONFIGFILE
 echo "L2_OC=0" >> $CONFIGFILE;
 fi
 
