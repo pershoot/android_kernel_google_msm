@@ -395,6 +395,12 @@ if
    ui_print("Force fast-charge enabled");
 endif;
 
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.7") == "1"
+     then
+   ui_print("Max screen off frequency enabled");
+endif;
+
 
 set_progress(0.3);
 

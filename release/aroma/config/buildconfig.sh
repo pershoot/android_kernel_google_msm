@@ -335,6 +335,31 @@ echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
 echo "FAST_CHARGE=0" >> $CONFIGFILE;
 fi
 
+#Max screen off frequency
+if [ -f "/tmp/aroma/maxscroff.prop" ];
+then
+SCROFF=`cat /tmp/aroma/maxscroff.prop | cut -d '=' -f2`
+echo -e "\n\n##### Max screen off frequency ######\n# 0 disabled\n# 1 594MHz\n# 2 702MHz" >> $CONFIGFILE
+echo -e "# 3 810MHz\n# 4 1026MHz\n# 5 1242MHz\n" >> $CONFIGFILE
+if [ $SCROFF = 1 ]; then
+  echo "SCROFF=1" >> $CONFIGFILE;
+elif [ $SCROFF = 2 ]; then
+  echo "SCROFF=2" >> $CONFIGFILE;
+elif [ $SCROFF = 3 ]; then
+  echo "SCROFF=3" >> $CONFIGFILE;
+elif [ $SCROFF = 4 ]; then
+  echo "SCROFF=4" >> $CONFIGFILE;
+elif [ $SCROFF = 5 ]; then
+  echo "SCROFF=5" >> $CONFIGFILE;
+else
+  echo "SCROFF=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Max screen off frequency ######\n# 0 disabled\n# 1 594MHz\n# 2 702MHz" >> $CONFIGFILE
+echo -e "# 3 810MHz\n# 4 1026MHz\n#5 1242MHz\n" >> $CONFIGFILE
+echo "SCROFF=0" >> $CONFIGFILE;
+fi
+
 #Battery life extender
 if [ -f "/tmp/aroma/ble.prop" ];
 then

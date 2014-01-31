@@ -379,7 +379,21 @@ checkbox(
   "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
   "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1,
   "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",1,
-  "Force USB fast-charge","Always charge in AC mode",0
+  "Force USB fast-charge","Always charge in AC mode",0,
+  "Enable max screen off frequency","Limits max frequency when the screen is off",0
+);
+endif;
+
+if file_getprop("/tmp/aroma/misc.prop","item.0.7") == "1"
+then
+
+selectbox(
+  "Max screen off CPU Frequency","Select max CPU frequency when the screen is off\n","@personalize","maxscroff.prop",
+  "594MHz","",0,
+  "702MHz","",0,
+  "810MHz","",0,
+  "1026MHz","",1,
+  "1242MHz","",0
 );
 endif;
 
