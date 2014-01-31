@@ -173,8 +173,8 @@ else
 fi
 
 #fstrim
-fstrim -v /cache | tee -a $KERNEL_LOGFILE
-fstrim -v /data | tee -a $KERNEL_LOGFILE
+fstrim -v /cache | tee -a $KERNEL_LOGFILE;
+fstrim -v /data | tee -a $KERNEL_LOGFILE;
 
 #thermal settings
 if [ "`grep THERM=1 $KERNEL_CONF`" ]; then
