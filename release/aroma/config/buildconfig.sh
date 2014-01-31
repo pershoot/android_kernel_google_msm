@@ -247,6 +247,94 @@ echo -e "# 3 -50mV\n# 4 -75mV\n# 5 -100mV\n# 6 -125mV\n# 7 -150mV\n" >> $CONFIGF
 echo "GPU_UV=1" >> $CONFIGFILE;
 fi
 
+#CPU governor
+if [ -f "/tmp/aroma/cpugov.prop" ];
+then
+CPU_GOV=`cat /tmp/aroma/cpugov.prop | cut -d '=' -f2`
+echo -e "\n\n##### CPU governor #####\n# 1 ondemand (stock)" >> $CONFIGFILE
+echo -e "# 2 interactive\n# 3 intellidemand\n# 4 smartmax\n" >> $CONFIGFILE
+if [ $CPU_GOV = 2 ]; then
+  echo "CPU_GOV=2" >> $CONFIGFILE;
+elif [ $CPU_GOV = 3 ]; then
+  echo "CPU_GOV=3" >> $CONFIGFILE;
+elif [ $CPU_GOV = 4 ]; then
+  echo "CPU_GOV=4" >> $CONFIGFILE;
+else
+  echo "CPU_GOV=1" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### CPU governor #####\n# 1 ondemand (stock)" >> $CONFIGFILE
+echo -e "# 2 interactive\n# 3 intellidemand\n# 4 smartmax\n" >> $CONFIGFILE
+echo "CPU_GOV=1" >> $CONFIGFILE;
+fi
+
+#I/O scheduler
+if [ -f "/tmp/aroma/iosched.prop" ];
+then
+IOSCHED=`cat /tmp/aroma/iosched.prop | cut -d '=' -f2`
+echo -e "\n\n##### I/O scheduler #####\n# 1 cfq (stock)\n# 2 row" >> $CONFIGFILE
+echo -e "# 3 deadline\n# 4 fiops\n# 5 sio# 6 noop\n" >> $CONFIGFILE
+if [ $IOSCHED = 2 ]; then
+  echo "IOSCHED=2" >> $CONFIGFILE;
+elif [ $IOSCHED = 3 ]; then
+  echo "IOSCHED=3" >> $CONFIGFILE;
+elif [ $IOSCHED = 4 ]; then
+  echo "IOSCHED=4" >> $CONFIGFILE;
+elif [ $IOSCHED = 5 ]; then
+  echo "IOSCHED=5" >> $CONFIGFILE;
+elif [ $IOSCHED = 6 ]; then
+  echo "IOSCHED=6" >> $CONFIGFILE;
+else
+  echo "IOSCHED=1" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### I/O scheduler #####\n# 1 cfq (stock)\n# 2 row" >> $CONFIGFILE
+echo -e "# 3 deadline\n# 4 fiops\n# 5 sio# 6 noop\n" >> $CONFIGFILE
+echo "IOSCHED=1" >> $CONFIGFILE;
+fi
+
+#read-ahead
+if [ -f "/tmp/aroma/readahead.prop" ];
+then
+READAHEAD=`cat /tmp/aroma/readahead.prop | cut -d '=' -f2`
+echo -e "\n\n##### Read-ahead buffer size (KB) #####\n# 1 128 (stock)\n# 2 256" >> $CONFIGFILE
+echo -e "# 3 512\n# 4 1024\n# 5 2048\n" >> $CONFIGFILE
+if [ $READAHEAD = 2 ]; then
+  echo "READAHEAD=2" >> $CONFIGFILE;
+elif [ $READAHEAD = 3 ]; then
+  echo "READAHEAD=3" >> $CONFIGFILE;
+elif [ $READAHEAD = 4 ]; then
+  echo "READAHEAD=4" >> $CONFIGFILE;
+elif [ $READAHEAD = 5 ]; then
+  echo "READAHEAD=5" >> $CONFIGFILE;
+elif [ $READAHEAD = 6 ]; then
+  echo "READAHEAD=6" >> $CONFIGFILE;
+else
+  echo "READAHEAD=1" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Read-ahead buffer size (KB) #####\n# 1 128 (stock)\n# 2 256" >> $CONFIGFILE
+echo -e "# 3 512\n# 4 1024\n# 5 2048\n" >> $CONFIGFILE
+echo "READAHEAD=1" >> $CONFIGFILE;
+fi
+
+#Fast Charge
+if [ -f "/tmp/aroma/misc.prop" ];
+then
+FAST_CHARGE=`grep "item.0.6" /tmp/aroma/misc.prop | cut -d '=' -f2`
+echo -e "\n\n##### Force fast-charge Settings #####\n# 0 to disable fast-charge" >> $CONFIGFILE
+echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
+if [ $FAST_CHARGE = 1 ]; then
+  echo "FAST_CHARGE=1" >> $CONFIGFILE;
+else
+  echo "FAST_CHARGE=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### Force fast-charge Settings #####\n# 0 to disable fast-charge" >> $CONFIGFILE
+echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
+echo "FAST_CHARGE=0" >> $CONFIGFILE;
+fi
+
 #Battery life extender
 if [ -f "/tmp/aroma/ble.prop" ];
 then

@@ -222,6 +222,96 @@ if
 endif;
 
 if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "1"
+     then
+   ui_print("Ondemand CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "2"
+     then
+   ui_print("Interactive CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "3"
+     then
+   ui_print("Intelli-demand CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "4"
+     then
+   ui_print("SmartMax CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "1"
+     then
+   ui_print("CFQ ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "2"
+     then
+   ui_print("ROW ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "3"
+     then
+   ui_print("DEADLINE ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "4"
+     then
+   ui_print("FIOPS ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "5"
+     then
+   ui_print("SIO ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "6"
+     then
+   ui_print("NOOP ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "1"
+     then
+   ui_print("128KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "2"
+     then
+   ui_print("256KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "3"
+     then
+   ui_print("512KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "4"
+     then
+   ui_print("1024KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "5"
+     then
+   ui_print("2048KB read-ahead buffer");
+endif;
+
+if
    file_getprop("/tmp/aroma/ble.prop","selected.0") == "1"
      then
    ui_print("default charge voltage");
@@ -297,6 +387,12 @@ if
    file_getprop("/tmp/aroma/misc.prop","item.0.4") == "1"
      then
    ui_print("Gentle Fair Sleepers enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.6") == "1"
+     then
+   ui_print("Force fast-charge enabled");
 endif;
 
 
@@ -404,7 +500,6 @@ if
    file_getprop("/tmp/aroma/galready.prop","item.0.2") == "1"
      then
    ui_print("Pray Cthulhu to get your settings backup in place..");
-   ui_print("He may need another reboot to do it as your device is too fast now !");
 run_program("/tmp/busybox", "cp", "/sdcard/glitch-settings.conf", "/system/etc/glitch-settings.conf");
 set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
 endif;

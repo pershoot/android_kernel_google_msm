@@ -91,6 +91,7 @@ checkbox(
   "Hotplug driver","CPU cores management.",1,
   "Thermal settings","Temperature treshold before downclocking.",1,
   "GPU settings","Max GPU clock, governor, uV.",1,
+  "Advanced settings","CPU governor, I/O scheduler, Read-ahead buffer.",1,
   "S2W/S2S/DT2W","Sweep to wake/sleep, Double tap to wake.",1,
   "Misc settings","BLE, OTG+charge hack, input-boost, etc.",1
 );
@@ -300,6 +301,36 @@ endif;
 
 if file_getprop("/tmp/aroma/glitch.prop","item.0.6") == "1"
 then
+selectbox(
+  "CPU governor","Select the CPU frequency scaling driver\n","@personalize","cpugov.prop",
+  "ondemand","(stock)",1,
+  "interactive","",0,
+  "intellidemand","",0,
+  "smartmax","",0
+);
+
+selectbox(
+  "I/O scheduler","Select the I/O scheduling mechanism.\n","@personalize","iosched.prop",
+  "cfq","(stock)",0,
+  "row","",1,
+  "deadline","",0,
+  "fiops","",0,
+  "sio","",0,
+  "noop","",0
+);
+
+selectbox(
+  "Read-ahead","Select the read-ahead buffer size.\n","@personalize","readahead.prop",
+  "128 KB","(stock)",0,
+  "256 KB","",1,
+  "512 KB","",0,
+  "1024 KB","",0,
+  "2048 KB","",0
+);
+endif;
+
+if file_getprop("/tmp/aroma/glitch.prop","item.0.7") == "1"
+then
 checkbox(
   "S2W/S2S/DT2W settings","Select the mods you want to enable\n","@personalize","S2WS.prop",
   "Sweep2Wake","Sweep across buttons to sleep/wake device",0,
@@ -331,7 +362,7 @@ selectbox(
 );
 endif;
 
-if file_getprop("/tmp/aroma/glitch.prop","item.0.7") == "1"
+if file_getprop("/tmp/aroma/glitch.prop","item.0.8") == "1"
 then
 selectbox(
   "Battery life eXtender settings","Sets the charge voltage of the battery to extend its lifespan\n","@personalize","ble.prop",
@@ -347,7 +378,8 @@ checkbox(
   "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0,
   "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
   "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1,
-  "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",1
+  "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",1,
+  "Force USB fast-charge","Always charge in AC mode",0
 );
 endif;
 
