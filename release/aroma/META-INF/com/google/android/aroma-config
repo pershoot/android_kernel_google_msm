@@ -113,6 +113,9 @@ checkbox(
 );
 endif;
 
+if file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
+then
+
 if file_getprop("/tmp/aroma/glitch.prop","item.0.1") == "1"
 then
 selectbox(
@@ -395,6 +398,8 @@ selectbox(
   "1026MHz","",1,
   "1242MHz","",0
 );
+endif;
+
 endif;
 
 menubox(
