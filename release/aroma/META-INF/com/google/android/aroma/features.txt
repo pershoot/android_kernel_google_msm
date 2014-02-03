@@ -22,6 +22,7 @@
 - Dynamic Fsync by Faux123
 - USB fast charging support
 - USB OTG charge hack support by flar2
+- Max screen off frequency support by flar2
 
 - Optimized algorithms and libraries
 - Various performance and power saving tweaks

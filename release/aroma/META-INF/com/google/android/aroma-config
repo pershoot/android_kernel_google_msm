@@ -67,7 +67,7 @@ agreebox("Terms Of Use","Please read the Glitch kernel Terms of Use...","themes/
    "Please check the box..."
 );
 
-textbox("Changelog",ini_get("rom_name") + " Changelog","themes/miui4/icon.info",readfile_aroma("changelog.txt"));
+textbox("Features",ini_get("rom_name") + " Features","themes/miui4/icon.info",readfile_aroma("features.txt"));
 
 alert(
   "PLEASE NOTE:",
