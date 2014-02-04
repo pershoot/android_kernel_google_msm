@@ -61,7 +61,7 @@ build ()
     mkdir -p "$target_dir"
 
     mka -C "$KERNEL_DIR" O="$target_dir" flo_defconfig HOSTCC="$CCACHE gcc"
-    mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc -flto -fno-use-linker-plugin" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
+    mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
 
 [[ -d release ]] || {
 	echo "must be in kernel root dir"
