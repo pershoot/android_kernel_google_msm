@@ -32,6 +32,8 @@
 #include <linux/miscdevice.h>
 #include <mach/gpio.h>
 
+#include <linux/fastchg.h> 
+
 #define SMBUS_RETRY                                     (0)
 #define GPIOPIN_LOW_BATTERY_DETECT	  29
 #define BATTERY_POLLING_RATE	(60)
@@ -84,6 +86,7 @@ static int bq27541_get_property(struct power_supply *psy,
 	enum power_supply_property psp, union power_supply_propval *val);
 extern unsigned  get_usb_cable_status(void);
 extern int smb345_config_thermal_charging(int temp, int volt, int rule);
+extern void reconfig_AICL(void);
 
 module_param(battery_current, uint, 0644);
 module_param(battery_remaining_capacity, uint, 0644);
@@ -159,8 +162,13 @@ void bq27541_check_cabe_type(void)
 	        usb_on = 0;
 	}
 	else if(bq27541_battery_cable_status  == USB_Cable) {
-		usb_on = 1;
-		ac_on = 0;
+		if (force_fast_charge == 1) {
+			ac_on = 1;
+			usb_on = 0;
+		} else {
+			usb_on = 1;
+			ac_on = 0;
+		}
 	}
 	else {
 		ac_on = 0;
@@ -380,6 +388,7 @@ static void battery_status_poll(struct work_struct *work)
 	if(!bq27541_battery_driver_ready)
 		BAT_NOTICE("battery driver not ready\n");
 
+	reconfig_AICL();
 	power_supply_changed(&bq27541_supply[Charger_Type_Battery]);
 
 	if (!bq27541_device->temp_err) {
@@ -614,10 +623,14 @@ static int bq27541_get_capacity(union power_supply_propval *val)
 	bool check_cap = false;
 	int smb_retry_max = (SMBUS_RETRY + 2);
 
+	bq27541_device->bat_capacity = 0;
 	do {
 		bq27541_device->smbus_status = bq27541_smbus_read_data(REG_CAPACITY, 0 ,&bq27541_device->bat_capacity);
-		if ((bq27541_device->bat_capacity <= 0) || (bq27541_device->bat_capacity > 100))
+		if ((bq27541_device->bat_capacity <= 0) || (bq27541_device->bat_capacity > 100)) {
 			check_cap = true;
+			BAT_NOTICE("check capacity, cap = %d, smb_retry = %d\n", bq27541_device->bat_capacity, smb_retry);
+		} else
+			check_cap = false;
 	} while(((bq27541_device->smbus_status < 0) || check_cap) && ( ++smb_retry <= smb_retry_max));
 
 	if (bq27541_device->smbus_status < 0) {
@@ -634,9 +647,14 @@ static int bq27541_get_capacity(union power_supply_propval *val)
 		}
 	}
 
-	ret = bq27541_device->bat_capacity;
+	temp_capacity = ret = bq27541_device->bat_capacity;
 
-	temp_capacity = ((ret >= 100) ? 100 : ret);
+	if (!(bq27541_device->bat_capacity >= bq27541_data[REG_CAPACITY].min_value &&
+			bq27541_device->bat_capacity <= bq27541_data[REG_CAPACITY].max_value)) {
+		val->intval = bq27541_device->old_capacity;
+		BAT_NOTICE("use old capacity=%u\n", bq27541_device->old_capacity);
+		return 0;
+	}
 
 	/* start: for mapping %99 to 100%. Lose 84%*/
 	if(temp_capacity==99)

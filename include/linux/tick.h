@@ -8,6 +8,7 @@
 
 #include <linux/clockchips.h>
 #include <linux/irqflags.h>
+#include <linux/hrtimer.h>
 
 #ifdef CONFIG_GENERIC_CLOCKEVENTS
 
@@ -139,5 +140,11 @@ static inline ktime_t tick_nohz_get_sleep_length(void)
 static inline u64 get_cpu_idle_time_us(int cpu, u64 *unused) { return -1; }
 static inline u64 get_cpu_iowait_time_us(int cpu, u64 *unused) { return -1; }
 # endif /* !NO_HZ */
+
+# ifdef CONFIG_CPU_IDLE_GOV_MENU
+extern void menu_hrtimer_cancel(void);
+# else
+static inline void menu_hrtimer_cancel(void) {}
+# endif /* CONFIG_CPU_IDLE_GOV_MENU */
 
 #endif

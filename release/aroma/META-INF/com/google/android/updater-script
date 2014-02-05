@@ -1,0 +1,557 @@
+set_progress(0.0);
+ui_print("");
+ui_print("Installing Glitch kernel...");
+
+set_progress(0.1);
+
+if
+   file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
+     then
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "1"
+     then
+   ui_print("CPU optimization: stock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "2"
+     then
+   ui_print("CPU optimization: improved");
+endif;
+
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "3"
+     then
+   ui_print("CPU optimization: balanced");
+endif;
+
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "4"
+     then
+   ui_print("CPU optimization: fast");
+endif;
+
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "5"
+     then
+   ui_print("CPU optimization: extreme");
+endif;
+
+if
+   file_getprop("/tmp/aroma/opt.prop","selected.0") == "6"
+     then
+   ui_print("CPU optimization: glitchy");
+endif;
+
+if
+   file_getprop("/tmp/aroma/minfreq.prop","selected.0") == "1"
+     then
+   ui_print("Minimum frequency: 162 MHz");
+endif;
+
+if
+   file_getprop("/tmp/aroma/minfreq.prop","selected.0") == "2"
+     then
+   ui_print("Minimum frequency: 270 MHz");
+endif;
+
+if
+   file_getprop("/tmp/aroma/minfreq.prop","selected.0") == "3"
+     then
+   ui_print("Minimum frequency: 384 MHz");
+endif;
+
+if
+   file_getprop("/tmp/aroma/minfreq.prop","selected.0") == "4"
+     then
+   ui_print("Minimum frequency: 594 MHz");
+endif;
+
+if
+   file_getprop("/tmp/aroma/minfreq.prop","selected.0") == "5"
+     then
+   ui_print("Minimum frequency: 810 MHz");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "1"
+     then
+   ui_print("Stock voltage");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "2"
+     then
+   ui_print("Undervolting to 850mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "3"
+     then
+   ui_print("Undervolting to 825mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "4"
+     then
+   ui_print("Undervolting to 800mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "5"
+     then
+   ui_print("Undervolting to 775mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "6"
+     then
+   ui_print("Undervolting to 750mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/uv.prop","selected.0") == "7"
+     then
+   ui_print("Undervolting to 725mV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/thermal.prop","selected.0") == "1"
+     then
+   ui_print("run cool");
+endif;
+if
+   file_getprop("/tmp/aroma/thermal.prop","selected.0") == "2"
+     then
+   ui_print("default thermal throttling");
+endif;
+if
+   file_getprop("/tmp/aroma/thermal.prop","selected.0") == "3"
+     then
+   ui_print("run hot");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "1"
+     then
+   ui_print("320 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "2"
+     then
+   ui_print("400 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "3"
+     then
+   ui_print("450 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "4"
+     then
+   ui_print("504 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "5"
+     then
+   ui_print("545 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "6"
+     then
+   ui_print("600 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuclock.prop","selected.0") == "7"
+     then
+   ui_print("627 MHz GPU Clock");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpugov.prop","selected.0") == "1"
+     then
+   ui_print("Ondemand GPU Governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpugov.prop","selected.0") == "2"
+     then
+   ui_print("Interactive GPU Governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "2"
+     then
+   ui_print("-25mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "3"
+     then
+   ui_print("-50mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "4"
+     then
+   ui_print("-75mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "5"
+     then
+   ui_print("-100mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "6"
+     then
+   ui_print("-125mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/gpuuv.prop","selected.0") == "7"
+     then
+   ui_print("-150mV GPU uV");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "1"
+     then
+   ui_print("Ondemand CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "2"
+     then
+   ui_print("Interactive CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "3"
+     then
+   ui_print("Intelli-demand CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/cpugov.prop","selected.0") == "4"
+     then
+   ui_print("SmartMax CPU governor");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "1"
+     then
+   ui_print("CFQ ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "2"
+     then
+   ui_print("ROW ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "3"
+     then
+   ui_print("DEADLINE ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "4"
+     then
+   ui_print("FIOPS ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "5"
+     then
+   ui_print("SIO ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/iosched.prop","selected.0") == "6"
+     then
+   ui_print("NOOP ioscheduler");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "1"
+     then
+   ui_print("128KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "2"
+     then
+   ui_print("256KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "3"
+     then
+   ui_print("512KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "4"
+     then
+   ui_print("1024KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/readahead.prop","selected.0") == "5"
+     then
+   ui_print("2048KB read-ahead buffer");
+endif;
+
+if
+   file_getprop("/tmp/aroma/ble.prop","selected.0") == "1"
+     then
+   ui_print("default charge voltage");
+endif;
+
+if
+   file_getprop("/tmp/aroma/ble.prop","selected.0") == "2"
+     then
+   ui_print("4.2V charge voltage");
+endif;
+
+if
+   file_getprop("/tmp/aroma/ble.prop","selected.0") == "3"
+     then
+   ui_print("4.1V charge voltage");
+endif;
+
+if
+   file_getprop("/tmp/aroma/ble.prop","selected.0") == "4"
+     then
+   ui_print("4.0V charge voltage");
+endif;
+
+if
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.1") == "1"
+     then
+   ui_print("Sweep2wake enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.2") == "1"
+     then
+   ui_print("Sweep2sleep only");
+endif;
+
+if
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.3") == "1"
+     then
+   ui_print("S2W/DT2W power toggle enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.4") == "1"
+     then
+   ui_print("Shortsweep enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/S2WS.prop","item.0.5") == "1"
+     then
+   ui_print("DoubleTap2Wake enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.1") == "1"
+     then
+   ui_print("Magnetic on/off disabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.2") == "1"
+     then
+   ui_print("OTG+Charge mode enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.3") == "1"
+     then
+   ui_print("Input-boost enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.4") == "1"
+     then
+   ui_print("Gentle Fair Sleepers enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.6") == "1"
+     then
+   ui_print("Force fast-charge enabled");
+endif;
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.7") == "1"
+     then
+   ui_print("Max screen off frequency enabled");
+endif;
+
+
+set_progress(0.3);
+
+
+package_extract_dir("config", "/tmp");
+set_perm(0, 0, 0777, "/tmp/busybox");
+set_perm(0, 0, 0777, "/tmp/compatibility.sh");
+set_perm(0, 0, 0777, "/tmp/compatibility2.sh");
+run_program("/tmp/busybox", "mount", "/system");
+
+ui_print("Cleaning up");
+delete("/system/etc/init.d/99elementalx");
+delete("/system/etc/init.d/99glitch");
+delete("/system/etc/elementalx.conf");
+delete("/system/etc/glitch.conf");
+delete("/system/etc/settings.conf");
+delete("/system/etc/glitch-settings.conf");
+delete("/system/etc/init.d/99zram.sh");
+delete("/system/lib/modules/cpufreq_limit.ko");
+delete("/system/lib/modules/scsi_wait_scan.ko");
+
+set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
+run_program("/tmp/systemcheck.sh");
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.5") == "1"
+     then
+   ui_print("Qualcomm optimized Dalvik/Bionic installed");
+package_extract_dir("qo_db", "/system");
+set_perm(0, 2000, 0755, "/system/bin/dexopt");
+set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "1"
+     then
+   ui_print("Qualcomm mpdecision enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision_bck -> mpdecision");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility2.sh");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "2"
+     then
+   ui_print("Showp1984 msm_mpdecision enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision -> mpdecision_bck");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility.sh");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "3"
+     then
+   ui_print("Faux123 Intelli-plug enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision -> mpdecision_bck");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility.sh");
+endif;
+
+ui_print("Installing system files for real.");
+package_extract_dir("system", "/system");
+set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/99glitch");
+set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
+
+set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
+run_program("/tmp/buildconfig.sh");
+run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glitch-settings.conf");
+set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
+
+package_extract_dir("boot", "/tmp");
+set_perm(0, 0, 0777, "/tmp/max_oc.sh");
+set_perm(0, 0, 0777, "/tmp/edit_ramdisk.sh");
+set_perm(0, 0, 0777, "/tmp/abootimg");
+
+ui_print("Applying init settings");
+run_program("/tmp/busybox", "dd", "if=/dev/block/mmcblk0p14", "of=/tmp/boot.img");
+run_program("/tmp/abootimg", "-x", "/tmp/boot.img", "/tmp/bootimg.cfg", "/tmp/zImage", "/tmp/initrd.img");
+run_program("/tmp/max_oc.sh");
+endif;
+
+if
+   file_getprop("/tmp/aroma/glitched.prop","selected.0") == "2"
+     then
+
+set_progress(0.3);
+
+package_extract_dir("config", "/tmp");
+set_perm(0, 0, 0777, "/tmp/busybox");
+run_program("/tmp/busybox", "mount", "/system");
+
+ui_print("Installing system files to be a good boy.");
+package_extract_dir("system", "/system");
+set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/99glitch");
+set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
+
+if
+   file_getprop("/tmp/aroma/galready.prop","item.0.2") == "1"
+     then
+   ui_print("Pray Cthulhu to get your settings backup in place..");
+run_program("/tmp/busybox", "cp", "/sdcard/glitch-settings.conf", "/system/etc/glitch-settings.conf");
+set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
+endif;
+
+ui_print("Do some useless cleaning in case something didn't went wrong...");
+delete("/system/lib/modules/cpufreq_limit.ko");
+delete("/system/lib/modules/scsi_wait_scan.ko");
+
+set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
+run_program("/tmp/systemcheck.sh");
+
+if
+   file_getprop("/tmp/aroma/galready.prop","item.0.1") == "1"
+     then
+   ui_print("Optimize some stuff because it's nice.");
+package_extract_dir("qo_db", "/system");
+set_perm(0, 2000, 0755, "/system/bin/dexopt");
+set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
+endif;
+
+ui_print("Try not to destroy your other settings.. too much.");
+
+package_extract_dir("boot", "/tmp");
+set_perm(0, 0, 0777, "/tmp/restore.sh");
+set_perm(0, 0, 0777, "/tmp/edit_ramdisk.sh");
+set_perm(0, 0, 0777, "/tmp/abootimg");
+
+run_program("/tmp/busybox", "dd", "if=/dev/block/mmcblk0p14", "of=/tmp/boot.img");
+run_program("/tmp/abootimg", "-x", "/tmp/boot.img", "/tmp/bootimg.cfg", "/tmp/zImage", "/tmp/initrd.img");
+run_program("/tmp/restore.sh");
+
+endif;
+
+set_progress(0.6);
+
+run_program("/tmp/edit_ramdisk.sh");
+run_program("/tmp/abootimg", "-u", "/tmp/boot.img", "-f", "/tmp/cmdline.cfg", "-k", "/tmp/glitch.zImage", "-r", "/tmp/initrd.img");
+
+ui_print("@Glitching your device...");
+run_program("/tmp/busybox", "dd", "if=/tmp/boot.img", "of=/dev/block/mmcblk0p14");
+ 
+ui_print("");
+set_progress(0.9);
+
+ui_print("");
+
+ui_print("");
+set_progress(1.0);
+ui_print("Finished!");

@@ -759,10 +759,12 @@ void __init early_init_mmu(void)
 	/* Initialize stab / SLB management */
 	if (mmu_has_feature(MMU_FTR_SLB))
 		slb_initialize();
+	else
+		stab_initialize(get_paca()->stab_real);
 }
 
 #ifdef CONFIG_SMP
-void __cpuinit early_init_mmu_secondary(void)
+void early_init_mmu_secondary(void)
 {
 	/* Initialize hash table for that CPU */
 	if (!firmware_has_feature(FW_FEATURE_LPAR))

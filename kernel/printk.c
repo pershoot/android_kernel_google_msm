@@ -1188,6 +1188,12 @@ module_param_named(console_suspend, console_suspend_enabled,
 MODULE_PARM_DESC(console_suspend, "suspend console during suspend"
 	" and hibernate operations");
 
+/* check current suspend/resume status of the console */
+int is_console_suspended(void)
+{
+	return console_suspended;
+}
+
 /**
  * suspend_console - suspend the console subsystem
  *
@@ -1212,13 +1218,13 @@ void resume_console(void)
 	console_unlock();
 }
 
-static void __cpuinit console_flush(struct work_struct *work)
+static void console_flush(struct work_struct *work)
 {
 	console_lock();
 	console_unlock();
 }
 
-static __cpuinitdata DECLARE_WORK(console_cpu_notify_work, console_flush);
+static DECLARE_WORK(console_cpu_notify_work, console_flush);
 
 /**
  * console_cpu_notify - print deferred console messages after CPU hotplug
@@ -1234,7 +1240,7 @@ static __cpuinitdata DECLARE_WORK(console_cpu_notify_work, console_flush);
  * Special handling must be done for cases invoked from an atomic context,
  * as we can't be taking the console semaphore here.
  */
-static int __cpuinit console_cpu_notify(struct notifier_block *self,
+static int console_cpu_notify(struct notifier_block *self,
 	unsigned long action, void *hcpu)
 {
 	switch (action) {
