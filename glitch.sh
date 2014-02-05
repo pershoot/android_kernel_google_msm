@@ -13,7 +13,7 @@ repo=~/android/system
 export ARCH="arm"
 #export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
 #export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/linaro_4.8.2-2013.09/bin/arm-gnueabi-"
-export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/sabermod-androideabi-4.8.3/bin/arm-linux-androideabi-"
+export CROSS_PREFIX="/home/belial/android/android_prebuilts_gcc_linux-x86_arm_sabermod-arm-linux-androideabi-4.8/bin/arm-linux-androideabi-"
 
 setup ()
 {
@@ -60,8 +60,8 @@ build ()
     rm -fr "$target_dir"
     mkdir -p "$target_dir"
 
-    mka -C "$KERNEL_DIR" O="$target_dir" flo_defconfig HOSTCC="$CCACHE gcc"
-    mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
+    make -j5 -o3 -C "$KERNEL_DIR" O="$target_dir" flo_defconfig HOSTCC="$CCACHE gcc"
+    make -j5 -o3 -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
 
 [[ -d release ]] || {
 	echo "must be in kernel root dir"
