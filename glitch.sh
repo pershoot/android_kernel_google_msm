@@ -12,7 +12,7 @@
 
 # Device options :
 	target_name="N7" #defines the flashable zip device name
-	target_variant="CM11" #defines the flashable zip additional name for variants
+	target_variant="" #defines the flashable zip additional name for variants
 	target_device="N7-2013" #defines the name of device-related folders (can be the same as $target_name)
 	target_defconfig="flo_defconfig" #defines the config to use for the build
 
@@ -101,7 +101,7 @@ cd release/aroma
 counter=$((counter + 1))
 
 mkdir -p $KERNEL_DIR/release/$target_device
-REL=Glitch-$target_name-r$counter-$target_variant.zip
+REL=Glitch-$target_name-r$counter$target_variant.zip
 
 	zip -q -r ${REL} boot config META-INF qo_db system
 	#sha256sum ${REL} > ${REL}.sha256sum
