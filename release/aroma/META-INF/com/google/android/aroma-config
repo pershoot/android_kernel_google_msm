@@ -108,7 +108,7 @@ alert(
 
 checkbox(
   "Glitched already ?","You may want to reinstall optimized libraries or restore your settings. Tick what you want.\n","@personalize","galready.prop",
-  "Install/Restore Qualcomm optimized libraries","In case of rom update. Safe to overwrite.",1,
+  "Install/Restore Qualcomm optimized libraries","In case of rom update. Safe to overwrite.",0,
   "Restore your settings from SDcard","If you have a glitch-settings.conf backup from a previous installation (on SDcard root)",0
 );
 endif;
@@ -381,9 +381,10 @@ checkbox(
   "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0,
   "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
   "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1,
-  "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",1,
+  "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",0,
   "Force USB fast-charge","Always charge in AC mode",0,
-  "Enable max screen off frequency","Limits max frequency when the screen is off",0
+  "Enable max screen off frequency","Limits max frequency when the screen is off",0,
+  "Enable max MC power savings","Sets multicore power saving to 2 to save battery (maximum possible)",0
 );
 endif;
 

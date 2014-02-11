@@ -360,6 +360,23 @@ echo -e "# 3 810MHz\n# 4 1026MHz\n#5 1242MHz\n" >> $CONFIGFILE
 echo "SCROFF=0" >> $CONFIGFILE;
 fi
 
+#MC Power Savings
+if [ -f "/tmp/aroma/misc.prop" ];
+then
+MC_POWERSAVE=`grep "item.0.8" /tmp/aroma/misc.prop | cut -d '=' -f2`
+echo -e "\n\n##### MC Power savings Settings #####\n# 0 to disable MC power savings" >> $CONFIGFILE
+echo -e "# 1 to enable maximum MC power savings\n" >> $CONFIGFILE
+if [ $MC_POWERSAVE = 1 ]; then
+  echo "MC_POWERSAVE=1" >> $CONFIGFILE;
+else
+  echo "MC_POWERSAVE=0" >> $CONFIGFILE;
+fi
+else
+echo -e "\n\n##### MC Power savings Settings #####\n# 0 to disable MC power savings" >> $CONFIGFILE
+echo -e "# 1 to enable maximum MC power savings\n" >> $CONFIGFILE
+echo "MC_POWERSAVE=0" >> $CONFIGFILE;
+fi
+
 #Battery life extender
 if [ -f "/tmp/aroma/ble.prop" ];
 then

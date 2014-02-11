@@ -172,6 +172,14 @@ else
   echo Gentle Fair Sleepers enabled >> $KERNEL_LOGFILE;
 fi
 
+#MC Power savings
+if [ "`grep MC_POWERSAVE=1 $KERNEL_CONF`" ]; then
+  echo 2 > /sys/devices/system/cpu/sched_mc_power_savings;
+  echo Maximum MC power savings >> $KERNEL_LOGFILE;
+else
+  echo MC power savings disabled >> $KERNEL_LOGFILE;
+fi
+
 #fstrim
 fstrim -v /cache | tee -a $KERNEL_LOGFILE;
 fstrim -v /data | tee -a $KERNEL_LOGFILE;
