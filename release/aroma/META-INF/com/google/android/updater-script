@@ -7,6 +7,75 @@ set_progress(0.1);
 if
    file_getprop("/tmp/aroma/glitched.prop","selected.0") == "1"
      then
+
+set_progress(0.3);
+
+package_extract_dir("config", "/tmp");
+set_perm(0, 0, 0777, "/tmp/busybox");
+set_perm(0, 0, 0777, "/tmp/compatibility.sh");
+set_perm(0, 0, 0777, "/tmp/compatibility2.sh");
+run_program("/tmp/busybox", "mount", "/system");
+
+ui_print("Cleaning up");
+delete("/system/etc/init.d/99elementalx");
+delete("/system/etc/init.d/99glitch");
+delete("/system/etc/elementalx.conf");
+delete("/system/etc/glitch.conf");
+delete("/system/etc/settings.conf");
+delete("/system/etc/glitch-settings.conf");
+delete("/system/etc/init.d/99zram.sh");
+delete("/system/lib/modules/cpufreq_limit.ko");
+delete("/system/lib/modules/scsi_wait_scan.ko");
+
+set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
+run_program("/tmp/systemcheck.sh");
+
+ui_print("Installing system files for real.");
+package_extract_dir("system", "/system");
+set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/99glitch");
+set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
+set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
+
+set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
+run_program("/tmp/buildconfig.sh");
+run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glitch-settings.conf");
+set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
+
+if
+   file_getprop("/tmp/aroma/misc.prop","item.0.5") == "1"
+     then
+   ui_print("Qualcomm optimized Dalvik/Bionic installed");
+package_extract_dir("qo_db", "/system");
+set_perm(0, 2000, 0755, "/system/bin/dexopt");
+set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
+endif;
+
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "2"
+     then
+   ui_print("Showp1984 msm_mpdecision enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision -> mpdecision_bck");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility.sh");
+else
+if
+   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "3"
+     then
+   ui_print("Faux123 Intelli-plug enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision -> mpdecision_bck");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility.sh");
+else
+   ui_print("Qualcomm mpdecision enabled");
+ui_print("Renaming binaries...");
+ui_print("  /system/bin/mpdecision_bck -> mpdecision");
+ui_print("  /system/bin/thermald -> thermald_bck");
+run_program("/tmp/compatibility2.sh");
+endif;
+endif;
+
 if
    file_getprop("/tmp/aroma/opt.prop","selected.0") == "1"
      then
@@ -400,80 +469,6 @@ if
      then
    ui_print("Max screen off frequency enabled");
 endif;
-
-
-set_progress(0.3);
-
-
-package_extract_dir("config", "/tmp");
-set_perm(0, 0, 0777, "/tmp/busybox");
-set_perm(0, 0, 0777, "/tmp/compatibility.sh");
-set_perm(0, 0, 0777, "/tmp/compatibility2.sh");
-run_program("/tmp/busybox", "mount", "/system");
-
-ui_print("Cleaning up");
-delete("/system/etc/init.d/99elementalx");
-delete("/system/etc/init.d/99glitch");
-delete("/system/etc/elementalx.conf");
-delete("/system/etc/glitch.conf");
-delete("/system/etc/settings.conf");
-delete("/system/etc/glitch-settings.conf");
-delete("/system/etc/init.d/99zram.sh");
-delete("/system/lib/modules/cpufreq_limit.ko");
-delete("/system/lib/modules/scsi_wait_scan.ko");
-
-set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
-run_program("/tmp/systemcheck.sh");
-
-if
-   file_getprop("/tmp/aroma/misc.prop","item.0.5") == "1"
-     then
-   ui_print("Qualcomm optimized Dalvik/Bionic installed");
-package_extract_dir("qo_db", "/system");
-set_perm(0, 2000, 0755, "/system/bin/dexopt");
-set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
-endif;
-
-if
-   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "1"
-     then
-   ui_print("Qualcomm mpdecision enabled");
-ui_print("Renaming binaries...");
-ui_print("  /system/bin/mpdecision_bck -> mpdecision");
-ui_print("  /system/bin/thermald -> thermald_bck");
-run_program("/tmp/compatibility2.sh");
-endif;
-
-if
-   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "2"
-     then
-   ui_print("Showp1984 msm_mpdecision enabled");
-ui_print("Renaming binaries...");
-ui_print("  /system/bin/mpdecision -> mpdecision_bck");
-ui_print("  /system/bin/thermald -> thermald_bck");
-run_program("/tmp/compatibility.sh");
-endif;
-
-if
-   file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "3"
-     then
-   ui_print("Faux123 Intelli-plug enabled");
-ui_print("Renaming binaries...");
-ui_print("  /system/bin/mpdecision -> mpdecision_bck");
-ui_print("  /system/bin/thermald -> thermald_bck");
-run_program("/tmp/compatibility.sh");
-endif;
-
-ui_print("Installing system files for real.");
-package_extract_dir("system", "/system");
-set_perm_recursive(0, 2000, 0777, 0777, "/system/etc/init.d/99glitch");
-set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
-set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
-
-set_perm(0, 0, 0777, "/tmp/buildconfig.sh");
-run_program("/tmp/buildconfig.sh");
-run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glitch-settings.conf");
-set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
 
 package_extract_dir("boot", "/tmp");
 set_perm(0, 0, 0777, "/tmp/max_oc.sh");

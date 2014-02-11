@@ -18,6 +18,8 @@ else
   echo "SWEEP2WAKE=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.1=99" > /tmp/aroma/S2WS.prop
+echo "item.0.2=99" > /tmp/aroma/S2WS.prop
 echo -e "\n\n##### Sweep2Wake Settings #####\n# 0 to disable sweep2wake" >> $CONFIGFILE
 echo -e "# 1 to enable sweep2wake and sweep2sleep (default)\n# 2 to enable sweep2sleep and disable sweep2wake\n" >> $CONFIGFILE
 echo "SWEEP2WAKE=0" >> $CONFIGFILE;
@@ -35,6 +37,7 @@ else
   echo "PWR_TOGGLE=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.3=99" > /tmp/aroma/S2WS.prop
 echo -e "\n\n##### S2W/DT2W power button toggle Settings #####\n# 0 to disable S2W/DT2W power button toggle" >> $CONFIGFILE
 echo -e "# 1 to enable S2W/DT2W power button toggle\n" >> $CONFIGFILE
 echo "PWR_TOGGLE=0" >> $CONFIGFILE;
@@ -52,6 +55,7 @@ else
   echo "SHORTSWEEP=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.4=99" > /tmp/aroma/S2WS.prop
 echo -e "\n\n##### Shortsweep Settings #####\n# 0 to disable Shortsweep" >> $CONFIGFILE
 echo -e "# 1 to enable Shortsweep\n" >> $CONFIGFILE
 echo "SHORTSWEEP=0" >> $CONFIGFILE;
@@ -69,6 +73,7 @@ else
   echo "DT2WAKE=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.5=99" > /tmp/aroma/S2WS.prop
 echo -e "\n\n##### DoubleTap2Wake Settings #####\n# 0 to disable DoubleTap2Wake" >> $CONFIGFILE
 echo -e "# 1 to enable DoubleTap2Wake\n" >> $CONFIGFILE
 echo "DT2WAKE=0" >> $CONFIGFILE;
@@ -88,6 +93,7 @@ else
   echo "S2S_ORIENTATION=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/orientation.prop
 echo -e "\n\n##### S2S orientation Settings #####\n# 0 for both" >> $CONFIGFILE
 echo -e "# 1 for portrait only\n# 2 for landscape only\n" >> $CONFIGFILE
 echo "S2S_ORIENTATION=0" >> $CONFIGFILE;
@@ -105,6 +111,7 @@ else
   echo "LID=1" >> $CONFIGFILE;
 fi
 else
+echo "item.0.1=99" >> /tmp/aroma/misc.prop
 echo -e "\n\n##### Magnetic on/off Settings #####\n# 0 to disable Magnetic on/off" >> $CONFIGFILE
 echo -e "# 1 to enable Magnetic on/off\n" >> $CONFIGFILE
 echo "LID=1" >> $CONFIGFILE;
@@ -121,6 +128,7 @@ else
   echo "OTGCM=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.2=99" >> /tmp/aroma/misc.prop
 echo -e "\n\n##### USB OTG+Charge Settings ######\n# 1 to enable USB host mode charging\n# 0 to disable USB host mode charging\n" >> $CONFIGFILE
 echo "OTGCM=0" >> $CONFIGFILE;
 fi
@@ -138,6 +146,7 @@ else
   echo "INPUTBOOST=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.3=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### Input-booster Settings ######\n# 1 to enable Input-boost\n# 0 to disable Input-boost\n" >> $CONFIGFILE
 echo "INPUTBOOST=0" >> $CONFIGFILE;
 fi
@@ -153,6 +162,7 @@ else
   echo "GFSLEEPERS=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.4=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### Gentle Fair Sleepers Settings ######\n# 1 to enable\n# 0 to disable\n" >> $CONFIGFILE
 echo "GFSLEEPERS=0" >> $CONFIGFILE;
 fi
@@ -171,6 +181,7 @@ else
   echo "THERM=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/thermal.prop
 echo -e "\n\n##### Thermal Settings #####\n# 0 for default thermal throttling" >> $CONFIGFILE
 echo -e "# 1 to run cool\n# 2 to run hot\n" >> $CONFIGFILE
 echo "THERM=0" >> $CONFIGFILE;
@@ -198,6 +209,7 @@ else
   echo "GPU_OC=2" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/gpuclock.prop
 echo -e "\n\n##### Max GPU Clock #####\n# 1 320 MHz" >> $CONFIGFILE
 echo -e "# 2 400 MHz\n# 3 450 MHz\n# 4 504 MHz\n# 5 545 MHz\n# 6 600 MHz\n# 7 627 MHz\n" >> $CONFIGFILE
 echo "GPU_OC=2" >> $CONFIGFILE;
@@ -215,6 +227,7 @@ else
   echo "GPU_GOV=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/gpugov.prop
 echo -e "\n\n##### GPU Governor #####\n# 1 Ondemand (default)" >> $CONFIGFILE
 echo -e "# 2 Interactive\n# 3 Performance\n" >> $CONFIGFILE
 echo "GPU_GOV=1" >> $CONFIGFILE;
@@ -242,6 +255,7 @@ else
   echo "GPU_UV=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/gpuuv.prop
 echo -e "\n\n##### GPU Undervolting #####\n# 1 Stock\n# 2 -25mV" >> $CONFIGFILE
 echo -e "# 3 -50mV\n# 4 -75mV\n# 5 -100mV\n# 6 -125mV\n# 7 -150mV\n" >> $CONFIGFILE
 echo "GPU_UV=1" >> $CONFIGFILE;
@@ -263,6 +277,7 @@ else
   echo "CPU_GOV=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/cpugov.prop
 echo -e "\n\n##### CPU governor #####\n# 1 ondemand (stock)" >> $CONFIGFILE
 echo -e "# 2 interactive\n# 3 intellidemand\n# 4 smartmax\n" >> $CONFIGFILE
 echo "CPU_GOV=1" >> $CONFIGFILE;
@@ -288,6 +303,7 @@ else
   echo "IOSCHED=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/iosched.prop
 echo -e "\n\n##### I/O scheduler #####\n# 1 cfq (stock)\n# 2 row" >> $CONFIGFILE
 echo -e "# 3 deadline\n# 4 fiops\n# 5 sio# 6 noop\n" >> $CONFIGFILE
 echo "IOSCHED=1" >> $CONFIGFILE;
@@ -313,6 +329,7 @@ else
   echo "READAHEAD=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/readahead.prop
 echo -e "\n\n##### Read-ahead buffer size (KB) #####\n# 1 128 (stock)\n# 2 256" >> $CONFIGFILE
 echo -e "# 3 512\n# 4 1024\n# 5 2048\n" >> $CONFIGFILE
 echo "READAHEAD=1" >> $CONFIGFILE;
@@ -330,6 +347,7 @@ else
   echo "FAST_CHARGE=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.6=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### Force fast-charge Settings #####\n# 0 to disable fast-charge" >> $CONFIGFILE
 echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
 echo "FAST_CHARGE=0" >> $CONFIGFILE;
@@ -355,6 +373,7 @@ else
   echo "SCROFF=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/maxscroff.prop
 echo -e "\n\n##### Max screen off frequency ######\n# 0 disabled\n# 1 594MHz\n# 2 702MHz" >> $CONFIGFILE
 echo -e "# 3 810MHz\n# 4 1026MHz\n#5 1242MHz\n" >> $CONFIGFILE
 echo "SCROFF=0" >> $CONFIGFILE;
@@ -372,6 +391,7 @@ else
   echo "MC_POWERSAVE=0" >> $CONFIGFILE;
 fi
 else
+echo "item.0.8=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### MC Power savings Settings #####\n# 0 to disable MC power savings" >> $CONFIGFILE
 echo -e "# 1 to enable maximum MC power savings\n" >> $CONFIGFILE
 echo "MC_POWERSAVE=0" >> $CONFIGFILE;
@@ -393,6 +413,7 @@ else
   echo "BLE=1" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/ble.prop
 echo -e "\n\n##### Battery life eXtender #####\n# 1 4.3V (stock - 100%)" >> $CONFIGFILE
 echo -e "# 2 4.2V (balanced - 93%)\n# 3 4.1V (conservative - 83%)\n# 4 4.0V (very conservative - 73%)\n" >> $CONFIGFILE
 echo "BLE=1" >> $CONFIGFILE;
@@ -446,6 +467,7 @@ else
   echo "MAXF_CPU0=1512" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/freq0.prop
 echo -e "\n\n##### Maximum CPU0 frequency (MHz) #####" >> $CONFIGFILE
 echo -e "1512, 1620, 1728, 1836, 1890, 1944, 1998" >> $CONFIGFILE;
 echo -e "2052, 2106, 2160, 2214, 2268, 2322\n" >> $CONFIGFILE; 
@@ -486,6 +508,7 @@ else
   echo "MAXF_CPU1=1512" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/freq1.prop
 echo -e "\n\n##### Maximum CPU1 frequency (MHz) #####" >> $CONFIGFILE
 echo -e "1512, 1620, 1728, 1836, 1890, 1944, 1998" >> $CONFIGFILE;
 echo -e "2052, 2106, 2160, 2214, 2268, 2322\n" >> $CONFIGFILE; 
@@ -526,6 +549,7 @@ else
   echo "MAXF_CPU2=1512" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/freq2.prop
 echo -e "\n\n##### Maximum CPU2 frequency (MHz) #####" >> $CONFIGFILE
 echo -e "1512, 1620, 1728, 1836, 1890, 1944, 1998" >> $CONFIGFILE;
 echo -e "2052, 2106, 2160, 2214, 2268, 2322\n" >> $CONFIGFILE; 
@@ -566,6 +590,7 @@ else
   echo "MAXF_CPU3=1512" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/freq3.prop
 echo -e "\n\n##### Maximum CPU3 frequency (MHz) #####" >> $CONFIGFILE
 echo -e "1512, 1620, 1728, 1836, 1890, 1944, 1998" >> $CONFIGFILE;
 echo -e "2052, 2106, 2160, 2214, 2268, 2322\n" >> $CONFIGFILE; 
@@ -589,6 +614,7 @@ else
   echo "MINF=384" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/minfreq.prop
 echo -e "\n\n##### Minimum CPU frequency (MHz) ##### 162, 270, 595 or 810 are valid frequencies.\n" >> $CONFIGFILE
 echo "MINF=384" >> $CONFIGFILE;
 fi
@@ -615,6 +641,7 @@ else
   echo "UV_LEVEL=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/uv.prop
 echo -e "\n\n##### Level of uV to apply to min frequency #####\n# 0 stock(no uV)\n# 1 -50 mV" >> $CONFIGFILE
 echo -e "# 2 -75 mV\n# 3 -100 mV\n# 4 -125 mV\n# 5 -150 mV\n" >> $CONFIGFILE
 echo "UV_LEVEL=0" >> $CONFIGFILE;
@@ -641,6 +668,7 @@ else
   echo "L2_OC=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/opt.prop
 echo -e "\n\n##### L2/cache OC settings #####\n# 0 stock(1.13GHz-4.26GBps)\n# 1 improved(1.19GHz-4.26GBps)" >> $CONFIGFILE
 echo -e "# 2 balanced(1.22GHz-4.66GBps)\n# 3 fast(1.35GHz-4.66GBps)\n# 4 extreme(1.43GHz-4.80GBps)" >> $CONFIGFILE
 echo -e "# 5 glitchy(1.49GHz-4.96GBps)\n" >> $CONFIGFILE
@@ -661,6 +689,7 @@ else
   echo "HOTPLUGDRV=0" >> $CONFIGFILE;
 fi
 else
+echo "selected.0=99" > /tmp/aroma/hotplug.prop
 echo -e "\n\n##### Hotplug driver Settings #####\n# 0 to enable qualcomm mpdecision (stock)" >> $CONFIGFILE
 echo -e "# 1 to enable msm_mpdecision (recommended)\n# 2 to enable intelli-plug\n" >> $CONFIGFILE
 echo "HOTPLUGDRV=0" >> $CONFIGFILE;
