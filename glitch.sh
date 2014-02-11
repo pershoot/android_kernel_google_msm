@@ -1,38 +1,55 @@
 #!/bin/bash
 
-# Glitch kernel build-script
-#
-# clean : clean the build directory.
-# cleank : clean the built kernel packages
-# cm : build a cm compatible kernel
+# Glitch kernel build-script (Aroma Edition)	#
+#					  	#
+# Options :				  	#
+#					  	#
+# clean : clean the build directory       	#
+# cleank : clean the built kernel packages	#
+#################################################
 
-# CM repo path :
-repo=~/android/system
+############## Basic configuration ##############
 
-# Toolchain :
-export ARCH="arm"
-#export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
-#export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/linaro_4.8.2-2013.09/bin/arm-gnueabi-"
-export CROSS_PREFIX="$repo/prebuilts/gcc/linux-x86/arm/sabermod-androideabi-4.8.3/bin/arm-linux-androideabi-"
+# Device options :
+	target_name="N7" #defines the flashable zip device name
+	target_variant="CM11" #defines the flashable zip additional name for variants
+	target_device="N7-2013" #defines the name of device-related folders (can be the same as $target_name)
+	target_defconfig="flo_defconfig" #defines the config to use for the build
+
+# Toolchain selection :
+# (default path is "kernel_tree_folder/../toolchains")
+# -------linux-x86
+	#export CROSS_PREFIX="arm-eabi-4.6/bin/arm-eabi-"
+	#export CROSS_PREFIX="sabermod-androideabi-4.8.3/bin/arm-linux-androideabi-"
+	export CROSS_PREFIX="arm-cortex_a15-linux-gnueabihf-linaro_4.8.3-2014.01/bin/arm-cortex_a15-linux-gnueabihf-"
+
+# -------darwin-x86
+	#export CROSS_PREFIX=""
+
+########## End of basic configuration ############
 
 setup ()
 {
-
-    if [ x = "x$repo" ] ; then
-        echo "Android build environment must be configured"
-        exit 1
-    fi
-    . "$repo"/build/envsetup.sh
+function mka() {
+    case `uname -s` in
+        Darwin)
+            make -j `sysctl hw.ncpu|cut -d" " -f2` "$@"
+            ;;
+        *)
+            schedtool -B -n 1 -e ionice -n 1 make -j `cat /proc/cpuinfo | grep "^processor" | wc -l` "$@"
+            ;;
+    esac
+};
 
 #   Arch-dependent definitions
     case `uname -s` in
         Darwin)
             KERNEL_DIR="$(dirname "$(greadlink -f "$0")")"
-            CROSS_PREFIX="$repo/prebuilts/gcc/darwin-x86/arm/arm-eabi-4.8/bin/arm-eabi-"
+            CROSS_PREFIX="$KERNEL_DIR/../toolchains/$CROSS_PREFIX"
             ;;
         *)
             KERNEL_DIR="$(dirname "$(readlink -f "$0")")"
-            CROSS_PREFIX="$CROSS_PREFIX"
+            CROSS_PREFIX="$KERNEL_DIR/../toolchains/$CROSS_PREFIX"
             ;;
     esac
 
@@ -42,7 +59,7 @@ setup ()
         CCACHE=ccache
         CCACHE_BASEDIR="$KERNEL_DIR"
         CCACHE_COMPRESS=1
-        CCACHE_DIR="$repo/kernel/Asus/.ccache"
+        CCACHE_DIR="$KERNEL_DIR/../.ccache"
         export CCACHE_DIR CCACHE_COMPRESS CCACHE_BASEDIR
     else
         CCACHE=""
@@ -52,15 +69,15 @@ setup ()
 
 build ()
 {
-
-    local target=flo
-    echo "Building for N7"
-    local target_dir="$BUILD_DIR/N7"
+    export ARCH="arm"
+    local target=$target_device
+    echo "Building for $target_device"
+    local target_dir="$BUILD_DIR/$target_device"
     local module
     rm -fr "$target_dir"
     mkdir -p "$target_dir"
 
-    mka -C "$KERNEL_DIR" O="$target_dir" flo_defconfig HOSTCC="$CCACHE gcc"
+    mka -C "$KERNEL_DIR" O="$target_dir" $target_defconfig HOSTCC="$CCACHE gcc"
     mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
 
 [[ -d release ]] || {
@@ -83,12 +100,12 @@ cd release/aroma
 
 counter=$((counter + 1))
 
-mkdir -p $KERNEL_DIR/release/Flashable-flo-AOSP
-REL=Glitch-N7-r$counter.zip
+mkdir -p $KERNEL_DIR/release/$target_device
+REL=Glitch-$target_name-r$counter-$target_variant.zip
 
 	zip -q -r ${REL} boot config META-INF qo_db system
 	#sha256sum ${REL} > ${REL}.sha256sum
-	mv ${REL}* $KERNEL_DIR/release/Flashable-flo-AOSP/
+	mv ${REL}* $KERNEL_DIR/release/$target_device/
 
 echo counter=$counter > $KERNEL_DIR/../rev;
 
@@ -113,15 +130,15 @@ if [ "$1" = clean ] ; then
 else
 
 if [ "$1" = cleank ] ; then
-    rm -fr "$KERNEL_DIR"/release/Flashable-flo-AOSP/*
-    rm -fr "$KERNEL_DIR"/release/Flashable-flo-AOSP4CM/*
+    rm -fr "$KERNEL_DIR"/release/$target_device/*
+    echo ""
     echo "Built kernels cleaned"
 
 else
 
 time {
 
-    build flo
+    build $target_device
 
 }
 fi
