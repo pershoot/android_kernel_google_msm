@@ -601,14 +601,16 @@ fi
 if [ -f "/tmp/aroma/minfreq.prop" ];
 then
 MINF=`cat /tmp/aroma/minfreq.prop | cut -d '=' -f2`
-echo -e "\n\n##### Minimum CPU frequency (MHz) ##### 162, 270, 595 or 810 are valid frequencies.\n" >> $CONFIGFILE
+echo -e "\n\n##### Minimum CPU frequency (MHz) ##### 81, 162, 270, 384, 595 or 810 are valid frequencies.\n" >> $CONFIGFILE
 if [ $MINF = 1 ]; then
-  echo "MINF=162" >> $CONFIGFILE;
+  echo "MINF=81" >> $CONFIGFILE;
 elif [ $MINF = 2 ]; then
+  echo "MINF=162" >> $CONFIGFILE;
+elif [ $MINF = 3 ]; then
   echo "MINF=270" >> $CONFIGFILE;
-elif [ $MINF = 4 ]; then
-  echo "MINF=595" >> $CONFIGFILE;
 elif [ $MINF = 5 ]; then
+  echo "MINF=595" >> $CONFIGFILE;
+elif [ $MINF = 6 ]; then
   echo "MINF=810" >> $CONFIGFILE;
 else
   echo "MINF=384" >> $CONFIGFILE;

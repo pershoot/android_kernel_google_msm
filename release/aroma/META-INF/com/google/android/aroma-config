@@ -231,6 +231,7 @@ then
 
 selectbox(
   "Minimum CPU Frequency","Select minimum CPU frequency\n","@personalize","minfreq.prop",
+  "81MHz","",0,
   "162MHz","",0,
   "270MHz","",0,
   "384MHz","(stock)",1,

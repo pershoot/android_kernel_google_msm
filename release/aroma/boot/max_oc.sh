@@ -189,18 +189,21 @@ val4=$(cat /tmp/aroma-data/minfreq.prop | cut -d '=' -f2)
 
 case $val4 in
 	1)
-	  min_clock="min_clock=162000"
+	  min_clock="min_clock=81000"
 	  ;;
 	2)
-	  min_clock="min_clock=270000"
+	  min_clock="min_clock=162000"
 	  ;;
 	3)
-	  min_clock="min_clock=384000"
+	  min_clock="min_clock=270000"
 	  ;;
 	4)
+	  min_clock="min_clock=384000"
+	  ;;
+	5)
 	  min_clock="min_clock=594000"
 	  ;;
-  	5)
+  	6)
 	  min_clock="min_clock=810000"
 	  ;;
 esac
