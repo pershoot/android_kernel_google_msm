@@ -380,7 +380,7 @@ checkbox(
   "Misc settings","Select the mods you want to enable/disable\n","@personalize","misc.prop",
   "Disable magnetic on/off","",0,
   "Enable USB OTG+Charge mode","Allows charging in USB host mode (disables self-powered OTG)",0,
-  "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",1,
+  "Enable input-boost","Improves smoothness with kernel-side hotplug drivers",0,
   "Enable Gentle Fair Sleepers","Disable for UI smoothness, but more battery consumption (enabled by default)",1,
   "Install Qualcomm optimized Dalvik/Bionic","Boost performances using Qualcomm-optimized libraries",0,
   "Force USB fast-charge","Always charge in AC mode",0,
