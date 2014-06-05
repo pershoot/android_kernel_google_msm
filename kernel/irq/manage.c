@@ -803,8 +803,7 @@ static irqreturn_t irq_thread_fn(struct irq_desc *desc,
 
 static void wake_threads_waitq(struct irq_desc *desc)
 {
-	if (atomic_dec_and_test(&desc->threads_active) &&
-	    waitqueue_active(&desc->wait_for_threads))
+	if (atomic_dec_and_test(&desc->threads_active))
 		wake_up(&desc->wait_for_threads);
 }
 
@@ -829,6 +828,8 @@ static int irq_thread(void *data)
 
 	sched_setscheduler(current, SCHED_FIFO, &param);
 	current->irq_thread = 1;
+
+	irq_thread_check_affinity(desc, action);
 
 	while (!irq_wait_for_interrupt(action)) {
 		irqreturn_t action_ret;
