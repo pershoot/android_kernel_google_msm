@@ -21,7 +21,8 @@
 # -------linux-x86
 	#export CROSS_PREFIX="arm-eabi-4.6/bin/arm-eabi-"
 	#export CROSS_PREFIX="sabermod-androideabi-4.8.3/bin/arm-linux-androideabi-"
-	export CROSS_PREFIX="arm-cortex_a15-linux-gnueabihf-linaro_4.8.3-2014.01/bin/arm-cortex_a15-linux-gnueabihf-"
+	#export CROSS_PREFIX="arm-cortex_a15-linux-gnueabihf-linaro_4.8.3-2014.01/bin/arm-cortex_a15-linux-gnueabihf-"
+	export CROSS_PREFIX="arm-cortex_a15-linux-gnueabihf-linaro_4.9.1-2014.05/bin/arm-cortex_a15-linux-gnueabihf-"
 
 # -------darwin-x86
 	#export CROSS_PREFIX=""
