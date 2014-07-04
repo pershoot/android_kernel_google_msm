@@ -3314,6 +3314,7 @@ static inline void hci_le_ltk_request_evt(struct hci_dev *hdev,
 
 	hci_send_cmd(hdev, HCI_OP_LE_LTK_REPLY, sizeof(cp), &cp);
 
+	if (ltk->type & HCI_SMP_STK) {
 	hci_dev_unlock(hdev);
 
 	return;

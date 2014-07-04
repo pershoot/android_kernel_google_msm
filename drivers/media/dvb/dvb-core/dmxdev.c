@@ -1799,8 +1799,7 @@ static int dvb_dmxdev_section_callback(const u8 *buffer1, size_t buffer1_len,
 		ret = dvb_dmxdev_buffer_write(&dmxdevfilter->buffer, buffer2,
 					      buffer2_len);
 
-	if (ret < 0) {
-		dvb_dmxdev_flush_events(&dmxdevfilter->events);
+	if (ret < 0)
 		dmxdevfilter->buffer.error = ret;
 
 		event.type = DMX_EVENT_BUFFER_OVERFLOW;
@@ -1816,7 +1815,6 @@ static int dvb_dmxdev_section_callback(const u8 *buffer1, size_t buffer1_len,
 					DMX_FILTER_CC_ERROR;
 		else
 			event.params.section.flags = 0;
-	}
 
 	dvb_dmxdev_add_event(&dmxdevfilter->events, &event);
 
@@ -1901,9 +1899,7 @@ static int dvb_dmxdev_ts_callback(const u8 *buffer1, size_t buffer1_len,
 		ret = dvb_dmxdev_buffer_write(buffer, buffer1, buffer1_len);
 		if (ret == buffer1_len)
 			ret = dvb_dmxdev_buffer_write(buffer, buffer2,
-								buffer2_len);
-		if (ret < 0) {
-			/* Enter buffer overflow state */
+	if (ret < 0)
 			dprintk("dmxdev: buffer overflow\n");
 			buffer->error = ret;
 			dvb_dmxdev_flush_events(events);
@@ -1930,7 +1926,6 @@ static int dvb_dmxdev_ts_callback(const u8 *buffer1, size_t buffer1_len,
 				dvb_dmxdev_add_event(events, &event);
 				events->current_event_data_size = 0;
 			}
-		}
 	}
 
 	spin_unlock(&dmxdevfilter->dev->lock);
