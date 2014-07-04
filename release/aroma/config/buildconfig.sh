@@ -338,7 +338,7 @@ fi
 #Fast Charge
 if [ -f "/tmp/aroma/misc.prop" ];
 then
-FAST_CHARGE=`grep "item.0.6" /tmp/aroma/misc.prop | cut -d '=' -f2`
+FAST_CHARGE=`grep "item.0.5" /tmp/aroma/misc.prop | cut -d '=' -f2`
 echo -e "\n\n##### Force fast-charge Settings #####\n# 0 to disable fast-charge" >> $CONFIGFILE
 echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
 if [ $FAST_CHARGE = 1 ]; then
@@ -347,7 +347,7 @@ else
   echo "FAST_CHARGE=0" >> $CONFIGFILE;
 fi
 else
-echo "item.0.6=99" > /tmp/aroma/misc.prop
+echo "item.0.5=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### Force fast-charge Settings #####\n# 0 to disable fast-charge" >> $CONFIGFILE
 echo -e "# 1 to enable fast-charge\n" >> $CONFIGFILE
 echo "FAST_CHARGE=0" >> $CONFIGFILE;
@@ -382,7 +382,7 @@ fi
 #MC Power Savings
 if [ -f "/tmp/aroma/misc.prop" ];
 then
-MC_POWERSAVE=`grep "item.0.8" /tmp/aroma/misc.prop | cut -d '=' -f2`
+MC_POWERSAVE=`grep "item.0.7" /tmp/aroma/misc.prop | cut -d '=' -f2`
 echo -e "\n\n##### MC Power savings Settings #####\n# 0 to disable MC power savings" >> $CONFIGFILE
 echo -e "# 1 to enable maximum MC power savings\n" >> $CONFIGFILE
 if [ $MC_POWERSAVE = 1 ]; then
@@ -391,7 +391,7 @@ else
   echo "MC_POWERSAVE=0" >> $CONFIGFILE;
 fi
 else
-echo "item.0.8=99" > /tmp/aroma/misc.prop
+echo "item.0.7=99" > /tmp/aroma/misc.prop
 echo -e "\n\n##### MC Power savings Settings #####\n# 0 to disable MC power savings" >> $CONFIGFILE
 echo -e "# 1 to enable maximum MC power savings\n" >> $CONFIGFILE
 echo "MC_POWERSAVE=0" >> $CONFIGFILE;

@@ -42,15 +42,6 @@ run_program("/tmp/busybox", "cp", "/tmp/glitch-settings.conf", "/system/etc/glit
 set_perm(0, 0, 0666, "/system/etc/glitch-settings.conf");
 
 if
-   file_getprop("/tmp/aroma/misc.prop","item.0.5") == "1"
-     then
-   ui_print("Qualcomm optimized Dalvik/Bionic installed");
-package_extract_dir("qo_db", "/system");
-set_perm(0, 2000, 0755, "/system/bin/dexopt");
-set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
-endif;
-
-if
    file_getprop("/tmp/aroma/hotplug.prop","selected.0") == "2"
      then
    ui_print("Showp1984 msm_mpdecision enabled");
@@ -504,7 +495,7 @@ set_perm_recursive(0, 0, 0644, 0644, "/system/lib/modules");
 set_perm_recursive(0, 2000, 0755, 0755, "/system/bin/fstrim");
 
 if
-   file_getprop("/tmp/aroma/galready.prop","item.0.2") == "1"
+   file_getprop("/tmp/aroma/galready.prop","item.0.1") == "1"
      then
    ui_print("Pray Cthulhu to get your settings backup in place..");
 run_program("/tmp/busybox", "cp", "/sdcard/glitch-settings.conf", "/system/etc/glitch-settings.conf");
@@ -517,15 +508,6 @@ delete("/system/lib/modules/scsi_wait_scan.ko");
 
 set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 run_program("/tmp/systemcheck.sh");
-
-if
-   file_getprop("/tmp/aroma/galready.prop","item.0.1") == "1"
-     then
-   ui_print("Optimize some stuff because it's nice.");
-package_extract_dir("qo_db", "/system");
-set_perm(0, 2000, 0755, "/system/bin/dexopt");
-set_perm(0, 2000, 0755, "/system/bin/dalvikvm");
-endif;
 
 ui_print("Try not to destroy your other settings.. too much.");
 

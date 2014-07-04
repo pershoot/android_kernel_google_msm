@@ -72,6 +72,7 @@ build ()
 {
     export ARCH="arm"
     local target=$target_device
+    echo "-----------------------------------------"
     echo "Building for $target_device"
     local target_dir="$BUILD_DIR/$target_device"
     local module
@@ -82,10 +83,12 @@ build ()
     mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
 
 [[ -d release ]] || {
+	echo "-----------------------------------------"
 	echo "must be in kernel root dir"
 	exit 1;
 }
 
+echo "-----------------------------------------"
 echo "copying modules and zImage"
 mkdir -p $KERNEL_DIR/release/aroma/system/lib/modules/
 cd $target_dir
@@ -94,6 +97,7 @@ find -name '*.ko' -exec cp -av {} $KERNEL_DIR/release/aroma/system/lib/modules/ 
 cd $KERNEL_DIR
 mv $target_dir/arch/arm/boot/zImage $KERNEL_DIR/release/aroma/boot/glitch.zImage
 
+echo "-----------------------------------------"
 echo "packaging it up"
 cd release/aroma
 
@@ -104,7 +108,7 @@ counter=$((counter + 1))
 mkdir -p $KERNEL_DIR/release/$target_device
 REL=Glitch-$target_name-r$counter$target_variant.zip
 
-	zip -q -r ${REL} boot config META-INF qo_db system
+	zip -q -r ${REL} boot config META-INF system
 	#sha256sum ${REL} > ${REL}.sha256sum
 	mv ${REL}* $KERNEL_DIR/release/$target_device/
 
@@ -113,7 +117,14 @@ echo counter=$counter > $KERNEL_DIR/../rev;
 rm boot/glitch.zImage
 rm -r system/lib/modules/*
 cd $KERNEL_DIR
+
+echo "-----------------------------------------"
+echo "Setting date in Aroma conf ("$(date +%B)""$(date +%e)" "$(date +%Y)")"
+AromaDateReplace='ini_set("rom_date",             "'$(date +%B)''$(date +%e)' '$(date +%Y)'");'
+sed "37s/.*/$AromaDateReplace/g" ./release/aroma/META-INF/com/google/android/aroma-config > ./aroma-config.tmp;
+mv ./aroma-config.tmp ./release/aroma/META-INF/com/google/android/aroma-config
 echo ""
+
 echo ${REL}
 }
     
@@ -125,15 +136,17 @@ if [ "$1" = clean ] ; then
     rm `find ./ -name '*.*~'` -rf
     rm `find ./ -name '*~'` -rf
     cd $KERNEL_DIR
-    echo ""
-    echo "Old build cleaned"
+    echo "-----------------------------"
+    echo "Previous build folder cleaned"
+    echo "-----------------------------"
 
 else
 
 if [ "$1" = cleank ] ; then
     rm -fr "$KERNEL_DIR"/release/$target_device/*
-    echo ""
+    echo "---------------------"
     echo "Built kernels cleaned"
+    echo "---------------------"
 
 else
 
