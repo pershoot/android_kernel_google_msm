@@ -972,7 +972,7 @@ static ssize_t update_firmware(struct device *dev, struct device_attribute *deva
 	 filp_close(firmware_fp, NULL);
 	 // check the firmware ID and version
 	 // force into firmware updating
-	 if(RECOVERY || 1 /* check_fw_version(firmware, pos, ts->fw_ver */ ) > 0){
+	 if(RECOVERY || 1 /* check_fw_version(firmware, pos, ts->fw_ver) */ > 0){
 	     touch_debug(DEBUG_INFO, "Firmware update start!\n");	
 	     do{
 	     	// reenable firmware update through sysfs by uncommenting following line
