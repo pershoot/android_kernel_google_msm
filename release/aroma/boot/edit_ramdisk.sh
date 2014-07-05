@@ -36,4 +36,36 @@ sed '/mkdir /storage 0050 root sdcard_r/a \
 	echo "CIF hack added";
 fi
 
+#Check for F2FS and change fstab accordingly in ramdisk
+mount /cache 2> /dev/null
+mount /data 2> /dev/null
+mount /system 2> /dev/null
+
+mount | grep -q 'cache type f2fs'
+CACHE_F2FS=$?
+mount | grep -q 'data type f2fs'
+DATA_F2FS=$?
+mount | grep -q 'system type f2fs'
+SYSTEM_F2FS=$?
+
+if [ $CACHE_F2FS -eq 0 ]; then
+	sed -i 's,#CACHE_ISF2FS,,' /tmp/fstab.tmp;
+else
+	sed -i 's,#CACHE_ISEXT4,,' /tmp/fstab.tmp;
+fi;
+if [ $DATA_F2FS -eq 0 ]; then
+	sed -i 's,#DATA_ISF2FS,,' /tmp/fstab.tmp;
+else
+	sed -i 's,#DATA_ISEXT4,,' /tmp/fstab.tmp;
+fi;
+if [ $SYSTEM_F2FS -eq 0 ]; then
+	sed -i 's,#SYS_ISF2FS,,' /tmp/fstab.tmp;
+else
+	sed -i 's,#SYS_ISEXT4,,' /tmp/fstab.tmp;
+fi;
+
+mv /tmp/ramdisk/fstab.flo /tmp/ramdisk/fstab.orig;
+mv /tmp/fstab.tmp /tmp/ramdisk/fstab.flo;
+
+#repack
 find . | cpio -o -H newc | gzip > /tmp/initrd.img

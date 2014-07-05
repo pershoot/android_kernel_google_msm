@@ -8,10 +8,8 @@
 
 <*>By using this kernel, you agree with the above terms!</*>
 
-<*>PLEASE NOTE:</*>
+<*>PLEASE NOTE:
 
-<*>This kernel will allow you to choose hardware settings that may not work with your device.</*>
+This kernel will allow you to choose hardware settings that may not work with your device.
 
-<*>If you install this and have problems such as instability or random reboots, please reinstall</*>
-
-<*>with a lower CPU frequency or higher voltage.</*>
+If you install this and have problems such as instability or random reboots, please reinstall with a lower CPU frequency or higher voltage.</*>
