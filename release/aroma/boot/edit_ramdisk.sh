@@ -48,6 +48,8 @@ DATA_F2FS=$?
 mount | grep -q 'system type f2fs'
 SYSTEM_F2FS=$?
 
+if [ $CACHE_F2FS -eq 0 ] || [ $DATA_F2FS -eq 0 ] || [ $SYSTEM_F2FS -eq 0 ]; then
+
 if [ $CACHE_F2FS -eq 0 ]; then
 	sed -i 's,#CACHE_ISF2FS,,' /tmp/fstab.tmp;
 else
@@ -64,8 +66,19 @@ else
 	sed -i 's,#SYS_ISEXT4,,' /tmp/fstab.tmp;
 fi;
 
+if [ ! -f "/tmp/ramdisk/fstab.orig" ]; then
 mv /tmp/ramdisk/fstab.flo /tmp/ramdisk/fstab.orig;
+fi;
+
 mv /tmp/fstab.tmp /tmp/ramdisk/fstab.flo;
+
+else
+
+if [ -f "/tmp/ramdisk/fstab.orig" ]; then
+mv /tmp/ramdisk/fstab.orig /tmp/ramdisk/fstab.flo;
+fi;
+
+fi;
 
 #repack
 find . | cpio -o -H newc | gzip > /tmp/initrd.img

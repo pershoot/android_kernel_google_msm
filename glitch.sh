@@ -97,6 +97,13 @@ find -name '*.ko' -exec cp -av {} $KERNEL_DIR/release/aroma/system/lib/modules/ 
 cd $KERNEL_DIR
 mv $target_dir/arch/arm/boot/zImage $KERNEL_DIR/release/aroma/boot/glitch.zImage
 
+cd $KERNEL_DIR
+echo "-----------------------------------------"
+echo "Setting date in Aroma conf ("$(date +%B)" "$(date +%e)" "$(date +%Y)")"
+AromaDateReplace='ini_set("rom_date",             "'$(date +%B)' '$(date +%e)' '$(date +%Y)'");'
+sed "37s/.*/$AromaDateReplace/g" ./release/aroma/META-INF/com/google/android/aroma-config > ./aroma-config.tmp;
+mv ./aroma-config.tmp ./release/aroma/META-INF/com/google/android/aroma-config
+
 echo "-----------------------------------------"
 echo "packaging it up"
 cd release/aroma
@@ -116,15 +123,8 @@ echo counter=$counter > $KERNEL_DIR/../rev;
 
 rm boot/glitch.zImage
 rm -r system/lib/modules/*
-cd $KERNEL_DIR
 
 echo "-----------------------------------------"
-echo "Setting date in Aroma conf ("$(date +%B)""$(date +%e)" "$(date +%Y)")"
-AromaDateReplace='ini_set("rom_date",             "'$(date +%B)''$(date +%e)' '$(date +%Y)'");'
-sed "37s/.*/$AromaDateReplace/g" ./release/aroma/META-INF/com/google/android/aroma-config > ./aroma-config.tmp;
-mv ./aroma-config.tmp ./release/aroma/META-INF/com/google/android/aroma-config
-echo ""
-
 echo ${REL}
 }
     
