@@ -407,7 +407,6 @@ static void acpi_processor_notify(struct acpi_device *device, u32 event)
 		acpi_bus_generate_proc_event(device, event, 0);
 		acpi_bus_generate_netlink_event(device->pnp.device_class,
 						  dev_name(&device->dev), event, 0);
-		break;
 	default:
 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
 				  "Unsupported event [0x%x]\n", event));
@@ -443,7 +442,7 @@ static int acpi_cpu_soft_notify(struct notifier_block *nfb,
 		/* Normal CPU soft online event */
 		} else {
 			acpi_processor_ppc_has_changed(pr, 0);
-			acpi_processor_hotplug(pr);
+			acpi_processor_cst_has_changed(pr);
 			acpi_processor_reevaluate_tstate(pr, action);
 			acpi_processor_tstate_has_changed(pr);
 		}
@@ -465,7 +464,7 @@ static struct notifier_block acpi_cpu_notifier =
  * acpi_cpu_soft_notify(). Getting it __cpuinit{data} is difficult, the
  * root cause seem to be that acpi_processor_uninstall_hotplug_notify()
  * is in the module_exit (__exit) func. Allowing acpi_processor_start()
- * to not be in section, but being called from funcs
+ * to not be in __cpuinit section, but being called from __cpuinit funcs
  * via __ref looks like the right thing to do here.
  */
 static __ref int acpi_processor_start(struct acpi_processor *pr)
@@ -526,7 +525,7 @@ err_power_exit:
  * (cpu_data(cpu)) values, like CPU feature flags, family, model, etc.
  * Such things have to be put in and set up above in acpi_processor_start()
  */
-static int acpi_processor_add(struct acpi_device *device)
+static int __cpuinit acpi_processor_add(struct acpi_device *device)
 {
 	struct acpi_processor *pr = NULL;
 	int result = 0;

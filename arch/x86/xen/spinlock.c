@@ -328,6 +328,7 @@ static noinline void xen_spin_unlock_slow(struct xen_spinlock *xl)
 		if (per_cpu(lock_spinners, cpu) == xl) {
 			ADD_STATS(released_slow_kicked, 1);
 			xen_send_IPI_one(cpu, XEN_SPIN_UNLOCK_VECTOR);
+			break;
 		}
 	}
 }
@@ -359,7 +360,7 @@ static irqreturn_t dummy_handler(int irq, void *dev_id)
 	return IRQ_HANDLED;
 }
 
-void xen_init_lock_cpu(int cpu)
+void __cpuinit xen_init_lock_cpu(int cpu)
 {
 	int irq;
 	const char *name;

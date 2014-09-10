@@ -852,7 +852,7 @@ static int audit_filter_rules(struct task_struct *tsk,
 static enum audit_state audit_filter_task(struct task_struct *tsk, char **key)
 {
 	struct audit_entry *e;
-	enum audit_state   state;
+	enum audit_state state = 0;
 
 	rcu_read_lock();
 	list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_TASK], list) {
@@ -866,22 +866,6 @@ static enum audit_state audit_filter_task(struct task_struct *tsk, char **key)
 	}
 	rcu_read_unlock();
 	return AUDIT_BUILD_CONTEXT;
-}
-
-static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
-{
-	int word, bit;
-
-	if (val > 0xffffffff)
-		return false;
-
-	word = AUDIT_WORD(val);
-	if (word >= AUDIT_BITMASK_SIZE)
-		return false;
-
-	bit = AUDIT_BIT(val);
-
-	return rule->mask[word] & bit;
 }
 
 /* At syscall entry and exit time, this filter is called if the
@@ -901,8 +885,11 @@ static enum audit_state audit_filter_syscall(struct task_struct *tsk,
 
 	rcu_read_lock();
 	if (!list_empty(list)) {
+		int word = AUDIT_WORD(ctx->major);
+		int bit  = AUDIT_BIT(ctx->major);
+
 		list_for_each_entry_rcu(e, list, list) {
-			if (audit_in_mask(&e->rule, ctx->major) &&
+			if ((e->rule.mask[word] & bit) == bit &&
 			    audit_filter_rules(tsk, &e->rule, ctx, NULL,
 					       &state, false)) {
 				rcu_read_unlock();

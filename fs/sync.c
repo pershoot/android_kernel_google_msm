@@ -7,6 +7,7 @@
 #include <linux/fs.h>
 #include <linux/slab.h>
 #include <linux/export.h>
+#include <linux/module.h>
 #include <linux/namei.h>
 #include <linux/sched.h>
 #include <linux/writeback.h>
@@ -246,7 +247,7 @@ EXPORT_SYMBOL(vfs_fsync_range);
  * set only metadata needed to access modified file data is written.
  */
 int vfs_fsync(struct file *file, int datasync)
-{
+{	
 	return vfs_fsync_range(file, 0, LLONG_MAX, datasync);
 }
 EXPORT_SYMBOL(vfs_fsync);
@@ -256,7 +257,7 @@ static int do_fsync(unsigned int fd, int datasync)
 	struct file *file;
 	int ret = -EBADF;
 	int fput_needed;
-
+	
 	file = fget_light(fd, &fput_needed);
 	if (file) {
 		ret = vfs_fsync(file, datasync);
@@ -294,7 +295,7 @@ SYSCALL_DEFINE1(fdatasync, unsigned int, fd)
  * This is just a simple wrapper about our general syncing function.
  */
 int generic_write_sync(struct file *file, loff_t pos, loff_t count)
-{
+{	
 	if (!(file->f_flags & O_DSYNC) && !IS_SYNC(file->f_mapping->host))
 		return 0;
 	return vfs_fsync_range(file, pos, pos + count - 1,

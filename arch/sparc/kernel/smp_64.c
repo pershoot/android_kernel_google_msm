@@ -87,7 +87,7 @@ extern void setup_sparc64_timer(void);
 
 static volatile unsigned long callin_flag = 0;
 
-void smp_callin(void)
+void __cpuinit smp_callin(void)
 {
 	int cpuid = hard_smp_processor_id();
 
@@ -282,7 +282,7 @@ static unsigned long kimage_addr_to_ra(void *p)
 	return kern_base + (val - KERNBASE);
 }
 
-static void ldom_startcpu_cpuid(unsigned int cpu, unsigned long thread_reg, void **descrp)
+static void __cpuinit ldom_startcpu_cpuid(unsigned int cpu, unsigned long thread_reg, void **descrp)
 {
 	extern unsigned long sparc64_ttable_tl0;
 	extern unsigned long kern_locked_tte_data;
@@ -343,7 +343,7 @@ extern unsigned long sparc64_cpu_startup;
  */
 static struct thread_info *cpu_new_thread = NULL;
 
-static int smp_boot_one_cpu(unsigned int cpu)
+static int __cpuinit smp_boot_one_cpu(unsigned int cpu)
 {
 	unsigned long entry =
 		(unsigned long)(&sparc64_cpu_startup);
@@ -856,7 +856,7 @@ void smp_tsb_sync(struct mm_struct *mm)
 }
 
 extern unsigned long xcall_flush_tlb_mm;
-extern unsigned long xcall_flush_tlb_page;
+extern unsigned long xcall_flush_tlb_pending;
 extern unsigned long xcall_flush_tlb_kernel_range;
 extern unsigned long xcall_fetch_glob_regs;
 extern unsigned long xcall_receive_signal;
@@ -1070,52 +1070,19 @@ local_flush_and_out:
 	put_cpu();
 }
 
-struct tlb_pending_info {
-	unsigned long ctx;
-	unsigned long nr;
-	unsigned long *vaddrs;
-};
-
-static void tlb_pending_func(void *info)
-{
-	struct tlb_pending_info *t = info;
-
-	__flush_tlb_pending(t->ctx, t->nr, t->vaddrs);
-}
-
 void smp_flush_tlb_pending(struct mm_struct *mm, unsigned long nr, unsigned long *vaddrs)
 {
 	u32 ctx = CTX_HWBITS(mm->context);
-	struct tlb_pending_info info;
 	int cpu = get_cpu();
-
-	info.ctx = ctx;
-	info.nr = nr;
-	info.vaddrs = vaddrs;
 
 	if (mm == current->mm && atomic_read(&mm->mm_users) == 1)
 		cpumask_copy(mm_cpumask(mm), cpumask_of(cpu));
 	else
-		smp_call_function_many(mm_cpumask(mm), tlb_pending_func,
-				       &info, 1);
+		smp_cross_call_masked(&xcall_flush_tlb_pending,
+				      ctx, nr, (unsigned long) vaddrs,
+				      mm_cpumask(mm));
 
 	__flush_tlb_pending(ctx, nr, vaddrs);
-
-	put_cpu();
-}
-
-void smp_flush_tlb_page(struct mm_struct *mm, unsigned long vaddr)
-{
-	unsigned long context = CTX_HWBITS(mm->context);
-	int cpu = get_cpu();
-
-	if (mm == current->mm && atomic_read(&mm->mm_users) == 1)
-		cpumask_copy(mm_cpumask(mm), cpumask_of(cpu));
-	else
-		smp_cross_call_masked(&xcall_flush_tlb_page,
-				      context, vaddr, 0,
-				      mm_cpumask(mm));
-	__flush_tlb_page(context, vaddr);
 
 	put_cpu();
 }
@@ -1260,7 +1227,7 @@ void __devinit smp_fill_in_sib_core_maps(void)
 	}
 }
 
-int __cpu_up(unsigned int cpu)
+int __cpuinit __cpu_up(unsigned int cpu)
 {
 	int ret = smp_boot_one_cpu(cpu);
 

@@ -53,8 +53,8 @@ EXPORT_SYMBOL(node_data);
 static bootmem_data_t __initdata node0_bdata;
 
 /* Information on the NUMA nodes that we compute early */
-unsigned long node_start_pfn[MAX_NUMNODES];
-unsigned long node_end_pfn[MAX_NUMNODES];
+unsigned long __cpuinitdata node_start_pfn[MAX_NUMNODES];
+unsigned long __cpuinitdata node_end_pfn[MAX_NUMNODES];
 unsigned long __initdata node_memmap_pfn[MAX_NUMNODES];
 unsigned long __initdata node_percpu_pfn[MAX_NUMNODES];
 unsigned long __initdata node_free_pfn[MAX_NUMNODES];
@@ -63,7 +63,7 @@ static unsigned long __initdata node_percpu[MAX_NUMNODES];
 
 #ifdef CONFIG_HIGHMEM
 /* Page frame index of end of lowmem on each controller. */
-unsigned long node_lowmem_end_pfn[MAX_NUMNODES];
+unsigned long __cpuinitdata node_lowmem_end_pfn[MAX_NUMNODES];
 
 /* Number of pages that can be mapped into lowmem. */
 static unsigned long __initdata mappable_physpages;
@@ -269,7 +269,7 @@ static void *__init setup_pa_va_mapping(void)
  * This is up to 4 mappings for lowmem, one mapping per memory
  * controller, plus one for our text segment.
  */
-static void store_permanent_mappings(void)
+static void __cpuinit store_permanent_mappings(void)
 {
 	int i;
 
@@ -860,7 +860,7 @@ subsys_initcall(topology_init);
  *
  * Called from setup_arch() on the boot cpu, or online_secondary().
  */
-void setup_cpu(int boot)
+void __cpuinit setup_cpu(int boot)
 {
 	/* The boot cpu sets up its permanent mappings much earlier. */
 	if (!boot)
@@ -912,8 +912,15 @@ void setup_cpu(int boot)
 
 #ifdef CONFIG_BLK_DEV_INITRD
 
+/*
+ * Note that the kernel can potentially support other compression
+ * techniques than gz, though we don't do so by default.  If we ever
+ * decide to do so we can either look for other filename extensions,
+ * or just allow a file with this name to be compressed with an
+ * arbitrary compressor (somewhat counterintuitively).
+ */
 static int __initdata set_initramfs_file;
-static char __initdata initramfs_file[128] = "initramfs";
+static char __initdata initramfs_file[128] = "initramfs.cpio.gz";
 
 static int __init setup_initramfs_file(char *str)
 {
@@ -927,9 +934,9 @@ static int __init setup_initramfs_file(char *str)
 early_param("initramfs_file", setup_initramfs_file);
 
 /*
- * We look for a file called "initramfs" in the hvfs.  If there is one, we
- * allocate some memory for it and it will be unpacked to the initramfs.
- * If it's compressed, the initd code will uncompress it first.
+ * We look for an "initramfs.cpio.gz" file in the hvfs.
+ * If there is one, we allocate some memory for it and it will be
+ * unpacked to the initramfs.
  */
 static void __init load_hv_initrd(void)
 {
@@ -939,16 +946,10 @@ static void __init load_hv_initrd(void)
 
 	fd = hv_fs_findfile((HV_VirtAddr) initramfs_file);
 	if (fd == HV_ENOENT) {
-		if (set_initramfs_file) {
+		if (set_initramfs_file)
 			pr_warning("No such hvfs initramfs file '%s'\n",
 				   initramfs_file);
-			return;
-		} else {
-			/* Try old backwards-compatible name. */
-			fd = hv_fs_findfile((HV_VirtAddr)"initramfs.cpio.gz");
-			if (fd == HV_ENOENT)
-				return;
-		}
+		return;
 	}
 	BUG_ON(fd < 0);
 	stat = hv_fs_fstat(fd);

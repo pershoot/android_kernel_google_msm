@@ -79,7 +79,7 @@ static void __init setup_node_to_cpumask_map(void)
 	dbg("Node to cpumask map for %d nodes\n", nr_node_ids);
 }
 
-static int fake_numa_create_new_node(unsigned long end_pfn,
+static int __cpuinit fake_numa_create_new_node(unsigned long end_pfn,
 						unsigned int *nid)
 {
 	unsigned long long mem;
@@ -201,7 +201,7 @@ int __node_distance(int a, int b)
 	int distance = LOCAL_DISTANCE;
 
 	if (!form1_affinity)
-		return ((a == b) ? LOCAL_DISTANCE : REMOTE_DISTANCE);
+		return distance;
 
 	for (i = 0; i < distance_ref_points_depth; i++) {
 		if (distance_lookup_table[a][i] == distance_lookup_table[b][i])
@@ -539,7 +539,7 @@ static int of_drconf_to_nid_single(struct of_drconf_cell *drmem,
  * Figure out to which domain a cpu belongs and stick it there.
  * Return the id of the domain used.
  */
-static int numa_setup_cpu(unsigned long lcpu)
+static int __cpuinit numa_setup_cpu(unsigned long lcpu)
 {
 	int nid = 0;
 	struct device_node *cpu = of_get_cpu_node(lcpu, NULL);
@@ -561,7 +561,7 @@ out:
 	return nid;
 }
 
-static int cpu_numa_callback(struct notifier_block *nfb,
+static int __cpuinit cpu_numa_callback(struct notifier_block *nfb,
 			     unsigned long action,
 			     void *hcpu)
 {
@@ -639,7 +639,7 @@ static void __init parse_drconf_memory(struct device_node *memory)
 	unsigned int n, rc, ranges, is_kexec_kdump = 0;
 	unsigned long lmb_size, base, size, sz;
 	int nid;
-	struct assoc_arrays aa = { .arrays = NULL };
+	struct assoc_arrays aa;
 
 	n = of_get_drconf_memory(memory, &dm);
 	if (!n)
@@ -942,7 +942,7 @@ static void __init *careful_zallocation(int nid, unsigned long size,
 	return ret;
 }
 
-static struct notifier_block ppc64_numa_nb = {
+static struct notifier_block __cpuinitdata ppc64_numa_nb = {
 	.notifier_call = cpu_numa_callback,
 	.priority = 1 /* Must run before sched domains notifier. */
 };

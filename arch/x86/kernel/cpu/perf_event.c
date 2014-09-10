@@ -1165,9 +1165,6 @@ static void x86_pmu_del(struct perf_event *event, int flags)
 	for (i = 0; i < cpuc->n_events; i++) {
 		if (event == cpuc->event_list[i]) {
 
-			if (i >= cpuc->n_events - cpuc->n_added)
-				--cpuc->n_added;
-
 			if (x86_pmu.put_event_constraints)
 				x86_pmu.put_event_constraints(cpuc, event);
 
@@ -1263,7 +1260,7 @@ perf_event_nmi_handler(unsigned int cmd, struct pt_regs *regs)
 struct event_constraint emptyconstraint;
 struct event_constraint unconstrained;
 
-static int
+static int __cpuinit
 x86_pmu_notifier(struct notifier_block *self, unsigned long action, void *hcpu)
 {
 	unsigned int cpu = (long)hcpu;

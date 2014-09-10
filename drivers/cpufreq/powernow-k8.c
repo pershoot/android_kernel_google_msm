@@ -35,6 +35,7 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/cpumask.h>
+#include <linux/sched.h>	/* for current / set_cpus_allowed() */
 #include <linux/io.h>
 #include <linux/delay.h>
 
@@ -1138,23 +1139,16 @@ static int transition_frequency_pstate(struct powernow_k8_data *data,
 	return res;
 }
 
-struct powernowk8_target_arg {
-	struct cpufreq_policy		*pol;
-	unsigned			targfreq;
-	unsigned			relation;
-};
-
-static long powernowk8_target_fn(void *arg)
+/* Driver entry point to switch to the target frequency */
+static int powernowk8_target(struct cpufreq_policy *pol,
+		unsigned targfreq, unsigned relation)
 {
-	struct powernowk8_target_arg *pta = arg;
-	struct cpufreq_policy *pol = pta->pol;
-	unsigned targfreq = pta->targfreq;
-	unsigned relation = pta->relation;
+	cpumask_var_t oldmask;
 	struct powernow_k8_data *data = per_cpu(powernow_data, pol->cpu);
 	u32 checkfid;
 	u32 checkvid;
 	unsigned int newstate;
-	int ret;
+	int ret = -EIO;
 
 	if (!data)
 		return -EINVAL;
@@ -1162,16 +1156,29 @@ static long powernowk8_target_fn(void *arg)
 	checkfid = data->currfid;
 	checkvid = data->currvid;
 
+	/* only run on specific CPU from here on. */
+	/* This is poor form: use a workqueue or smp_call_function_single */
+	if (!alloc_cpumask_var(&oldmask, GFP_KERNEL))
+		return -ENOMEM;
+
+	cpumask_copy(oldmask, tsk_cpus_allowed(current));
+	set_cpus_allowed_ptr(current, cpumask_of(pol->cpu));
+
+	if (smp_processor_id() != pol->cpu) {
+		printk(KERN_ERR PFX "limiting to cpu %u failed\n", pol->cpu);
+		goto err_out;
+	}
+
 	if (pending_bit_stuck()) {
 		printk(KERN_ERR PFX "failing targ, change pending bit set\n");
-		return -EIO;
+		goto err_out;
 	}
 
 	pr_debug("targ: cpu %d, %d kHz, min %d, max %d, relation %d\n",
 		pol->cpu, targfreq, pol->min, pol->max, relation);
 
 	if (query_current_values_with_pending_wait(data))
-		return -EIO;
+		goto err_out;
 
 	if (cpu_family != CPU_HW_PSTATE) {
 		pr_debug("targ: curr fid 0x%x, vid 0x%x\n",
@@ -1189,7 +1196,7 @@ static long powernowk8_target_fn(void *arg)
 
 	if (cpufreq_frequency_table_target(pol, data->powernow_table,
 				targfreq, relation, &newstate))
-		return -EIO;
+		goto err_out;
 
 	mutex_lock(&fidvid_mutex);
 
@@ -1202,8 +1209,9 @@ static long powernowk8_target_fn(void *arg)
 		ret = transition_frequency_fidvid(data, newstate);
 	if (ret) {
 		printk(KERN_ERR PFX "transition frequency failed\n");
+		ret = 1;
 		mutex_unlock(&fidvid_mutex);
-		return 1;
+		goto err_out;
 	}
 	mutex_unlock(&fidvid_mutex);
 
@@ -1212,18 +1220,12 @@ static long powernowk8_target_fn(void *arg)
 				data->powernow_table[newstate].index);
 	else
 		pol->cur = find_khz_freq_from_fid(data->currfid);
+	ret = 0;
 
-	return 0;
-}
-
-/* Driver entry point to switch to the target frequency */
-static int powernowk8_target(struct cpufreq_policy *pol,
-		unsigned targfreq, unsigned relation)
-{
-	struct powernowk8_target_arg pta = { .pol = pol, .targfreq = targfreq,
-					     .relation = relation };
-
-	return work_on_cpu(pol->cpu, powernowk8_target_fn, &pta);
+err_out:
+	set_cpus_allowed_ptr(current, oldmask);
+	free_cpumask_var(oldmask);
+	return ret;
 }
 
 /* Driver entry point to verify the policy and range of frequencies */
@@ -1242,7 +1244,7 @@ struct init_on_cpu {
 	int rc;
 };
 
-static void powernowk8_cpu_init_on_cpu(void *_init_on_cpu)
+static void __cpuinit powernowk8_cpu_init_on_cpu(void *_init_on_cpu)
 {
 	struct init_on_cpu *init_on_cpu = _init_on_cpu;
 
@@ -1264,7 +1266,7 @@ static void powernowk8_cpu_init_on_cpu(void *_init_on_cpu)
 }
 
 /* per CPU init entry point to the driver */
-static int powernowk8_cpu_init(struct cpufreq_policy *pol)
+static int __cpuinit powernowk8_cpu_init(struct cpufreq_policy *pol)
 {
 	static const char ACPI_PSS_BIOS_BUG_MSG[] =
 		KERN_ERR FW_BUG PFX "No compatible ACPI _PSS objects found.\n"
@@ -1550,7 +1552,7 @@ static struct notifier_block cpb_nb = {
 };
 
 /* driver entry point for init */
-static int powernowk8_init(void)
+static int __cpuinit powernowk8_init(void)
 {
 	unsigned int i, supported_cpus = 0, cpu;
 	int rv;

@@ -53,7 +53,7 @@ MODULE_PARM_DESC(tjmax, "TjMax value in degrees Celsius");
 
 #define BASE_SYSFS_ATTR_NO	2	/* Sysfs Base attr no for coretemp */
 #define NUM_REAL_CORES		32	/* Number of Real cores per cpu */
-#define CORETEMP_NAME_LENGTH	19	/* String Length of attrs */
+#define CORETEMP_NAME_LENGTH	17	/* String Length of attrs */
 #define MAX_CORE_ATTRS		4	/* Maximum no of basic attrs */
 #define TOTAL_ATTRS		(MAX_CORE_ATTRS + 1)
 #define MAX_CORE_DATA		(NUM_REAL_CORES + BASE_SYSFS_ATTR_NO)
@@ -191,27 +191,7 @@ static ssize_t show_temp(struct device *dev,
 	return tdata->valid ? sprintf(buf, "%d\n", tdata->temp) : -EAGAIN;
 }
 
-struct tjmax {
-	char const *id;
-	int tjmax;
-};
-
-static struct tjmax __cpuinitconst tjmax_table[] = {
-	{ "CPU D410", 100000 },
-	{ "CPU D425", 100000 },
-	{ "CPU D510", 100000 },
-	{ "CPU D525", 100000 },
-	{ "CPU N450", 100000 },
-	{ "CPU N455", 100000 },
-	{ "CPU N470", 100000 },
-	{ "CPU N475", 100000 },
-	{ "CPU  230", 100000 },		/* Model 0x1c, stepping 2	*/
-	{ "CPU  330", 125000 },		/* Model 0x1c, stepping 2	*/
-	{ "CPU CE4110", 110000 },	/* Model 0x1c, stepping 10	*/
-	{ "CPU CE4150", 110000 },	/* Model 0x1c, stepping 10	*/
-	{ "CPU CE4170", 110000 },	/* Model 0x1c, stepping 10	*/
-};
-
+static int __cpuinit adjust_tjmax(struct cpuinfo_x86 *c, u32 id,
 				  struct device *dev)
 {
 	/* The 100C is default for both mobile and non mobile CPUs */
@@ -222,13 +202,6 @@ static struct tjmax __cpuinitconst tjmax_table[] = {
 	int err;
 	u32 eax, edx;
 	struct pci_dev *host_bridge;
-	int i;
-
-	/* explicit tjmax table entries override heuristics */
-	for (i = 0; i < ARRAY_SIZE(tjmax_table); i++) {
-		if (strstr(c->x86_model_id, tjmax_table[i].id))
-			return tjmax_table[i].tjmax;
-	}
 
 	/* Early chips have no MSR for TjMax */
 
@@ -237,8 +210,7 @@ static struct tjmax __cpuinitconst tjmax_table[] = {
 
 	/* Atom CPUs */
 
-	if (c->x86_model == 0x1c || c->x86_model == 0x26
-	    || c->x86_model == 0x27) {
+	if (c->x86_model == 0x1c) {
 		usemsr_ee = 0;
 
 		host_bridge = pci_get_bus_and_slot(0, PCI_DEVFN(0, 0));
@@ -251,9 +223,6 @@ static struct tjmax __cpuinitconst tjmax_table[] = {
 			tjmax = 90000;
 
 		pci_dev_put(host_bridge);
-	} else if (c->x86_model == 0x36) {
-		usemsr_ee = 0;
-		tjmax = 100000;
 	}
 
 	if (c->x86_model > 0xe && usemsr_ee) {
@@ -317,7 +286,7 @@ static struct tjmax __cpuinitconst tjmax_table[] = {
 	return tjmax;
 }
 
-static int get_tjmax(struct cpuinfo_x86 *c, u32 id,
+static int __cpuinit get_tjmax(struct cpuinfo_x86 *c, u32 id,
 			       struct device *dev)
 {
 	int err;
@@ -367,7 +336,7 @@ static int __devinit create_name_attr(struct platform_data *pdata,
 	return device_create_file(dev, &pdata->name_attr);
 }
 
-static int create_core_attrs(struct temp_data *tdata,
+static int __cpuinit create_core_attrs(struct temp_data *tdata,
 				       struct device *dev, int attr_no)
 {
 	int err, i;
@@ -401,7 +370,7 @@ exit_free:
 }
 
 
-static int chk_ucode_version(unsigned int cpu)
+static int __cpuinit chk_ucode_version(unsigned int cpu)
 {
 	struct cpuinfo_x86 *c = &cpu_data(cpu);
 
@@ -418,7 +387,7 @@ static int chk_ucode_version(unsigned int cpu)
 	return 0;
 }
 
-static struct platform_device *coretemp_get_pdev(unsigned int cpu)
+static struct platform_device __cpuinit *coretemp_get_pdev(unsigned int cpu)
 {
 	u16 phys_proc_id = TO_PHYS_ID(cpu);
 	struct pdev_entry *p;
@@ -435,7 +404,7 @@ static struct platform_device *coretemp_get_pdev(unsigned int cpu)
 	return NULL;
 }
 
-static struct temp_data *init_temp_data(unsigned int cpu,
+static struct temp_data __cpuinit *init_temp_data(unsigned int cpu,
 						  int pkg_flag)
 {
 	struct temp_data *tdata;
@@ -454,7 +423,7 @@ static struct temp_data *init_temp_data(unsigned int cpu,
 	return tdata;
 }
 
-static int create_core_data(struct platform_device *pdev,
+static int __cpuinit create_core_data(struct platform_device *pdev,
 				unsigned int cpu, int pkg_flag)
 {
 	struct temp_data *tdata;
@@ -525,7 +494,7 @@ exit_free:
 	return err;
 }
 
-static void coretemp_add_core(unsigned int cpu, int pkg_flag)
+static void __cpuinit coretemp_add_core(unsigned int cpu, int pkg_flag)
 {
 	struct platform_device *pdev = coretemp_get_pdev(cpu);
 	int err;
@@ -610,7 +579,7 @@ static struct platform_driver coretemp_driver = {
 	.remove = __devexit_p(coretemp_remove),
 };
 
-static int coretemp_device_add(unsigned int cpu)
+static int __cpuinit coretemp_device_add(unsigned int cpu)
 {
 	int err;
 	struct platform_device *pdev;
@@ -654,7 +623,7 @@ exit:
 	return err;
 }
 
-static void coretemp_device_remove(unsigned int cpu)
+static void __cpuinit coretemp_device_remove(unsigned int cpu)
 {
 	struct pdev_entry *p, *n;
 	u16 phys_proc_id = TO_PHYS_ID(cpu);
@@ -670,7 +639,7 @@ static void coretemp_device_remove(unsigned int cpu)
 	mutex_unlock(&pdev_list_mutex);
 }
 
-static bool is_any_core_online(struct platform_data *pdata)
+static bool __cpuinit is_any_core_online(struct platform_data *pdata)
 {
 	int i;
 
@@ -684,7 +653,7 @@ static bool is_any_core_online(struct platform_data *pdata)
 	return false;
 }
 
-static void get_core_online(unsigned int cpu)
+static void __cpuinit get_core_online(unsigned int cpu)
 {
 	struct cpuinfo_x86 *c = &cpu_data(cpu);
 	struct platform_device *pdev = coretemp_get_pdev(cpu);
@@ -695,7 +664,7 @@ static void get_core_online(unsigned int cpu)
 	 * sensors. We check this bit only, all the early CPUs
 	 * without thermal sensors will be filtered out.
 	 */
-	if (!cpu_has(c, X86_FEATURE_DTHERM))
+	if (!cpu_has(c, X86_FEATURE_DTS))
 		return;
 
 	if (!pdev) {
@@ -726,7 +695,7 @@ static void get_core_online(unsigned int cpu)
 	coretemp_add_core(cpu, 0);
 }
 
-static void put_core_offline(unsigned int cpu)
+static void __cpuinit put_core_offline(unsigned int cpu)
 {
 	int i, indx;
 	struct platform_data *pdata;
@@ -774,7 +743,7 @@ static void put_core_offline(unsigned int cpu)
 		coretemp_device_remove(cpu);
 }
 
-static int coretemp_cpu_callback(struct notifier_block *nfb,
+static int __cpuinit coretemp_cpu_callback(struct notifier_block *nfb,
 				 unsigned long action, void *hcpu)
 {
 	unsigned int cpu = (unsigned long) hcpu;
@@ -796,7 +765,7 @@ static struct notifier_block coretemp_cpu_notifier __refdata = {
 };
 
 static const struct x86_cpu_id coretemp_ids[] = {
-	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_DTHERM },
+	{ X86_VENDOR_INTEL, X86_FAMILY_ANY, X86_MODEL_ANY, X86_FEATURE_DTS },
 	{}
 };
 MODULE_DEVICE_TABLE(x86cpu, coretemp_ids);

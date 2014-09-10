@@ -123,16 +123,16 @@ static unsigned int		mxcsr_feature_mask __read_mostly = 0xffffffffu;
 unsigned int xstate_size;
 EXPORT_SYMBOL_GPL(xstate_size);
 unsigned int sig_xstate_ia32_size = sizeof(struct _fpstate_ia32);
-static struct i387_fxsave_struct fx_scratch;
+static struct i387_fxsave_struct fx_scratch __cpuinitdata;
 
-static void mxcsr_feature_mask_init(void)
+static void __cpuinit mxcsr_feature_mask_init(void)
 {
 	unsigned long mask = 0;
 
 	clts();
 	if (cpu_has_fxsr) {
 		memset(&fx_scratch, 0, sizeof(struct i387_fxsave_struct));
-		asm volatile("fxsave %0" : "+m" (fx_scratch));
+		asm volatile("fxsave %0" : : "m" (fx_scratch));
 		mask = fx_scratch.mxcsr_mask;
 		if (mask == 0)
 			mask = 0x0000ffbf;
@@ -141,7 +141,7 @@ static void mxcsr_feature_mask_init(void)
 	stts();
 }
 
-static void init_thread_xstate(void)
+static void __cpuinit init_thread_xstate(void)
 {
 	/*
 	 * Note that xstate_size might be overwriten later during
@@ -170,7 +170,7 @@ static void init_thread_xstate(void)
  * into all processes.
  */
 
-void fpu_init(void)
+void __cpuinit fpu_init(void)
 {
 	unsigned long cr0;
 	unsigned long cr4_mask = 0;

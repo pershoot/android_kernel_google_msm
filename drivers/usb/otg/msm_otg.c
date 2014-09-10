@@ -1287,7 +1287,6 @@ static void msm_otg_start_host(struct usb_otg *otg, int on)
 
 	if (on) {
 		dev_dbg(otg->phy->dev, "host on\n");
-
 		//otg+charge: don't use battery to power perhipherals in host mode
 		if (usbhost_charge_mode)
 			smb345_otg_status(false);
@@ -4421,5 +4420,4 @@ module_exit(msm_otg_exit);
 
 MODULE_LICENSE("GPL v2");
 MODULE_DESCRIPTION("MSM USB transceiver driver");
-
 

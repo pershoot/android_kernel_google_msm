@@ -185,7 +185,7 @@ case $val3 in
 esac
 
 #set min_clock
-val4=$(cat /tmp/aroma-data/minfreq.prop | cut -d '=' -f2)
+val4=$(grep selected.5 /tmp/aroma-data/cpu.prop | cut -d '=' -f2)
 
 case $val4 in
 	1)
@@ -209,7 +209,7 @@ case $val4 in
 esac
 
 #set optimization level
-val5=$(cat /tmp/aroma-data/opt.prop | cut -d '=' -f2)
+val5=$(grep selected.2 /tmp/aroma-data/cpu.prop | cut -d '=' -f2)
 
 case $val5 in
 	1)
@@ -233,7 +233,7 @@ case $val5 in
 esac
 
 #set undervolting
-val6=$(cat /tmp/aroma-data/uv.prop | cut -d '=' -f2)
+val6=$(grep selected.3 /tmp/aroma-data/nrg.prop | cut -d '=' -f2)
 
 case $val6 in
 	1)

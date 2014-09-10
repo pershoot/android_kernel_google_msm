@@ -42,6 +42,6 @@ echo "cmdline = console=ttyHSL0,115200,n8 androidboot.hardware=flo user_debug=31
 
 else
 
-echo "glitch-settings.conf file not found. If you have one, please restore your backup from SDcard or do a complete installation.";
+echo "glitch-settings.conf file not found. If you have one, please restore your backup from SDcard or make a complete installation.";
 
 fi

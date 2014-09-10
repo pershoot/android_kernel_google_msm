@@ -46,6 +46,7 @@
 #include <linux/sync.h>
 #include <linux/sw_sync.h>
 #include <linux/file.h>
+#include <linux/moduleparam.h>
 
 #define MSM_FB_C
 #include "msm_fb.h"
@@ -61,6 +62,9 @@
 #ifdef CONFIG_HAS_EARLYSUSPEND
 #undef CONFIG_HAS_EARLYSUSPEND
 #endif
+
+int backlight_dimmer = 0;
+module_param(backlight_dimmer, int, 0755);
 
 static unsigned char *fbram;
 static unsigned char *fbram_phys;
@@ -97,10 +101,10 @@ static struct ion_client *iclient;
 
 u32 msm_fb_debug_enabled;
 /* Setting msm_fb_msg_level to 8 prints out ALL messages */
-u32 msm_fb_msg_level = 0;
+u32 msm_fb_msg_level = 7;
 
 /* Setting mddi_msg_level to 8 prints out ALL messages */
-u32 mddi_msg_level = 0;
+u32 mddi_msg_level = 5;
 
 extern int32 mdp_block_power_cnt[MDP_MAX_BLOCK];
 extern unsigned long mdp_timer_duration;
@@ -200,17 +204,21 @@ static void msm_fb_set_bl_brightness(struct led_classdev *led_cdev,
 		bl_lvl = 0;
 	else if (value >= MAX_BACKLIGHT_BRIGHTNESS)
 		bl_lvl = mfd->panel_info.bl_max;
-	else
+	else if (backlight_dimmer > 0) {
+		if (value <= backlight_dimmer) {
+			bl_lvl = 1;
+		} else {
+			bl_lvl = (mfd->panel_info.bl_min + ((value - 1) * 2 *
+				(mfd->panel_info.bl_max - mfd->panel_info.bl_min) +
+				MAX_BACKLIGHT_BRIGHTNESS - 1) /
+				(MAX_BACKLIGHT_BRIGHTNESS - 1) / 2) - backlight_dimmer;
+		}
+	} else {
 		bl_lvl = mfd->panel_info.bl_min + ((value - 1) * 2 *
 			(mfd->panel_info.bl_max - mfd->panel_info.bl_min) +
 			MAX_BACKLIGHT_BRIGHTNESS - 1) /
 			(MAX_BACKLIGHT_BRIGHTNESS - 1) / 2;
-
-	/*
-	 * Little hack to allow the lowest brightness value to be as low as possible
-	 */
-	if (bl_lvl <= 5)
-		bl_lvl = mfd->panel_info.bl_min;
+	}
 
 	down(&mfd->sem);
 	msm_fb_set_backlight(mfd, bl_lvl);
