@@ -78,6 +78,7 @@ build ()
     local target_dir="$BUILD_DIR/$target_device"
     local module
     rm -fr "$target_dir"
+    rm -f $KERNEL_DIR/tmp_$target_defconfig
     rm -f $KERNEL_DIR/arch/arm/configs/release_$target_defconfig
     mkdir -p "$target_dir"
 
@@ -91,6 +92,7 @@ releasenumber='CONFIG_LOCALVERSION="-Glitch-N7-AOSP-r'$counter'"'
 cp arch/arm/configs/$target_defconfig tmp_$target_defconfig;
 sed "43s/.*/$releasenumber/g" tmp_$target_defconfig > release_$target_defconfig;
 mv release_$target_defconfig arch/arm/configs/release_$target_defconfig
+rm -f $KERNEL_DIR/tmp_$target_defconfig
 
     mka -C "$KERNEL_DIR" O="$target_dir" release_$target_defconfig HOSTCC="$CCACHE gcc"
     mka -C "$KERNEL_DIR" O="$target_dir" HOSTCC="$CCACHE gcc" CROSS_COMPILE="$CCACHE $CROSS_PREFIX" zImage modules
@@ -146,6 +148,7 @@ if [ "$1" = clean ] ; then
     rm `find ./ -name '*.*~'` -rf
     rm `find ./ -name '*~'` -rf
     cd $KERNEL_DIR
+    rm -f $KERNEL_DIR/tmp_$target_defconfig
     rm -f arch/arm/configs/release_$target_defconfig
     echo "-----------------------------"
     echo "Previous build folder cleaned"
