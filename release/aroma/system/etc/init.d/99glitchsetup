@@ -84,17 +84,23 @@ fi
 
 #Set HOTPLUGDRV
 if [ "`grep HOTPLUGDRV=1 $KERNEL_CONF`" ]; then
+  echo 0 > /sys/module/msm_mpdecision/parameters/enabled;
   echo 1 > /sys/module/msm_hotplug/msm_enabled;
   echo 0 > /sys/module/intelli_plug/parameters/intelli_plug_active;
-  echo msm_mpdecision enabled >> $KERNEL_LOGFILE;
+  echo 0 > /sys/module/intelli_plug/parameters/touch_boost_active;
+  echo MSM-hotplug enabled >> $KERNEL_LOGFILE;
 elif [ "`grep HOTPLUGDRV=2 $KERNEL_CONF`" ]; then
+  echo 0 > /sys/module/msm_mpdecision/parameters/enabled;
   echo 0 > /sys/module/msm_hotplug/msm_enabled;
   echo 1 > /sys/module/intelli_plug/parameters/intelli_plug_active;
-  echo intelli_plug enabled >> $KERNEL_LOGFILE;
+  echo 1 > /sys/module/intelli_plug/parameters/touch_boost_active;
+  echo Intelli-Plug enabled >> $KERNEL_LOGFILE;
 else
+  echo 1 > /sys/module/msm_mpdecision/parameters/enabled;
   echo 0 > /sys/module/msm_hotplug/msm_enabled;
   echo 0 > /sys/module/intelli_plug/parameters/intelli_plug_active;
-  echo qualcomm_mpdecision enabled >> $KERNEL_LOGFILE;
+  echo 0 > /sys/module/intelli_plug/parameters/touch_boost_active;
+  echo Qualcomm MPdecision enabled >> $KERNEL_LOGFILE;
 fi
 
 #Set Wake Gestures

@@ -89,7 +89,7 @@ selectbox(
   "balanced","(1.22GHz-4.66GBps)",0,
   "fast","(1.35GHz-4.66GBps)",0,
   "extreme","(1.43GHz-4.80GBps)",0,
-  "glitchy","(1.49GHz-4.96GBps)",0,
+  "glitchy","(1.49GHz-4.80GBps)",0,
 
   "Hotplug driver","",2,
   "Qualcomm mpdecision","(stock)",0,
