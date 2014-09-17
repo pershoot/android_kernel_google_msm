@@ -28,6 +28,7 @@ delete("/system/etc/glitch-settings.conf");
 delete("/system/etc/init.d/99zram.sh");
 delete("/system/lib/modules/cpufreq_limit.ko");
 delete("/system/lib/modules/scsi_wait_scan.ko");
+delete("/system/lib/modules/frandom.ko");
 
 set_perm(0, 0, 0777, "/tmp/systemcheck.sh");
 run_program("/tmp/systemcheck.sh");
