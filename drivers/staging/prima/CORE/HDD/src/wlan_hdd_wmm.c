@@ -81,6 +81,7 @@
 #include <linux/semaphore.h>
 #include <wlan_hdd_hostapd.h>
 #include <wlan_hdd_softap_tx_rx.h>
+#include <vos_sched.h>
 
 // change logging behavior based upon debug flag
 #ifdef HDD_WMM_DEBUG
@@ -689,7 +690,7 @@ static eHalStatus hdd_wmm_sme_callback (tHalHandle hHal,
 
 #ifdef FEATURE_WLAN_CCX
       // Check if the inactivity interval is specified
-      if (pCurrentQosInfo->inactivity_interval) {
+      if (pCurrentQosInfo && pCurrentQosInfo->inactivity_interval) {
          VOS_TRACE(VOS_MODULE_ID_HDD, WMM_TRACE_LEVEL_INFO,
                  "%s: Inactivity timer value = %d for AC=%d\n",
                  __func__, pCurrentQosInfo->inactivity_interval, acType);
@@ -1813,6 +1814,14 @@ v_U16_t hdd_wmm_select_queue(struct net_device * dev, struct sk_buff *skb)
 
    hdd_adapter_t *pAdapter =  WLAN_HDD_GET_PRIV_PTR(dev);
 
+   if (isWDresetInProgress())
+   {
+       VOS_TRACE( VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_WARN,
+                  FL("called during WDReset"));
+       skb->priority = SME_QOS_WMM_UP_BE;
+       return HDD_LINUX_AC_BE;
+   }
+
    // if we don't want QoS or the AP doesn't support Qos
    // All traffic will get equal opportuniy to transmit data frames.
    if( hdd_wmm_is_active(pAdapter) ) {
@@ -2268,7 +2277,7 @@ hdd_wlan_wmm_status_e hdd_wmm_addts( hdd_adapter_t* pAdapter,
         default:
           // we didn't get back one of the SME_QOS_STATUS_MODIFY_* status codes
           VOS_TRACE( VOS_MODULE_ID_HDD, WMM_TRACE_LEVEL_ERROR,
-                     "%s: unexpected SME Status=%d\n", smeStatus );
+                     "%s: unexpected SME Status=%d\n", __func__, smeStatus );
           VOS_ASSERT(0);
           return HDD_WLAN_WMM_STATUS_MODIFY_FAILED;
       }
@@ -2346,7 +2355,7 @@ hdd_wlan_wmm_status_e hdd_wmm_addts( hdd_adapter_t* pAdapter,
       // we didn't get back one of the SME_QOS_STATUS_SETUP_* status codes
       hdd_wmm_free_context(pQosContext);
       VOS_TRACE( VOS_MODULE_ID_HDD, WMM_TRACE_LEVEL_ERROR,
-                 "%s: unexpected SME Status=%d\n", smeStatus );
+                 "%s: unexpected SME Status=%d\n", __func__, smeStatus );
       VOS_ASSERT(0);
       return HDD_WLAN_WMM_STATUS_SETUP_FAILED;
    }
@@ -2457,7 +2466,7 @@ hdd_wlan_wmm_status_e hdd_wmm_delts( hdd_adapter_t* pAdapter,
    default:
       // we didn't get back one of the SME_QOS_STATUS_RELEASE_* status codes
       VOS_TRACE( VOS_MODULE_ID_HDD, WMM_TRACE_LEVEL_ERROR,
-                 "%s: unexpected SME Status=%d\n", smeStatus );
+                 "%s: unexpected SME Status=%d\n", __func__, smeStatus );
       VOS_ASSERT(0);
       status = HDD_WLAN_WMM_STATUS_RELEASE_FAILED;
    }

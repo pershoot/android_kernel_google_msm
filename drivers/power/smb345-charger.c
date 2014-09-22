@@ -104,8 +104,8 @@
 #define WPC_INIT_DET_INTERVAL	(22 * HZ)
 #define WPC_SET_CURT_LIMIT_CNT	6
 #define BAT_Cold_Limit 0
-#define BAT_Hot_Limit 55
-#define BAT_Mid_Temp_Wired 50
+#define BAT_Hot_Limit 45
+#define BAT_Mid_Temp_Wired 45
 #define BAT_Mid_Temp_Wireless 40
 #define FLOAT_VOLT 0x2A
 #define FLOAT_VOLT_LOW 0x1E
@@ -119,6 +119,9 @@ extern int  bq27541_battery_callback(unsigned usb_cable_state);
 extern int  bq27541_wireless_callback(unsigned wireless_state);
 extern void touch_callback(unsigned cable_status);
 static ssize_t smb345_reg_show(struct device *dev, struct device_attribute *attr, char *buf);
+static ssize_t smb345_float_voltage_show(struct device *dev, struct device_attribute *attr, char *buf);
+static ssize_t smb345_float_voltage_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count);
 
 /* Global variables */
 static struct smb345_charger *charger;
@@ -132,12 +135,16 @@ extern int ac_on;
 extern int usb_on;
 static bool wpc_en;
 static bool disable_DCIN;
+static int float_volt_setting = 4300;
 
 /* Sysfs interface */
 static DEVICE_ATTR(reg_status, S_IWUSR | S_IRUGO, smb345_reg_show, NULL);
+static DEVICE_ATTR(float_voltage, 0644, smb345_float_voltage_show,
+	smb345_float_voltage_store);
 
 static struct attribute *smb345_attributes[] = {
 	&dev_attr_reg_status.attr,
+	&dev_attr_float_voltage.attr,
 NULL
 };
 
@@ -453,17 +460,7 @@ error:
 
 static irqreturn_t smb345_inok_isr(int irq, void *dev_id)
 {
-	struct smb345_charger *smb = dev_id;
-	int status = gpio_get_value(GPIO_AC_OK);
-
-	SMB_NOTICE("VBUS_DET = %s\n", status ? "H" : "L");
-
-	if (ac_on && !status)
-		queue_delayed_work(smb345_wq, &smb->cable_det_work, 0);
-	else {
-		if (delayed_work_pending(&charger->cable_det_work))
-			cancel_delayed_work(&charger->cable_det_work);
-	}
+	SMB_NOTICE("VBUS_DET = %s\n", gpio_get_value(GPIO_AC_OK) ? "H" : "L");
 
 	return IRQ_HANDLED;
 }
@@ -627,6 +624,11 @@ static void wireless_isr_work_function(struct work_struct *dat)
 
 	SMB_NOTICE("wireless state = %d\n", wireless_is_plugged());
 
+	if (otg_on) {
+		SMB_NOTICE("bypass wireless isr due to otg_on\n");
+		return;
+	}
+
 	if (wireless_is_plugged())
 		wireless_set();
 	else
@@ -635,6 +637,10 @@ static void wireless_isr_work_function(struct work_struct *dat)
 
 static void wireless_det_work_function(struct work_struct *dat)
 {
+	if (otg_on) {
+		SMB_NOTICE("bypass wireless isr due to otg_on\n");
+		return;
+	}
 	if (wireless_is_plugged())
 		wireless_set();
 }
@@ -654,12 +660,9 @@ static void wireless_set_current_function(struct work_struct *dat)
 	queue_delayed_work(smb345_wq, &charger->wireless_set_current_work, WPC_SET_CURT_INTERVAL);
 }
 
-static void cable_det_work_function(struct work_struct *dat)
+void reconfig_AICL(void)
 {
 	struct i2c_client *client = charger->client;
-
-	if (delayed_work_pending(&charger->cable_det_work))
-		cancel_delayed_work(&charger->cable_det_work);
 
 	if (ac_on && !gpio_get_value(GPIO_AC_OK)) {
 		int retval;
@@ -668,7 +671,7 @@ static void cable_det_work_function(struct work_struct *dat)
 			dev_err(&client->dev, "%s(): Failed in reading 0x%02x",
 			__func__, smb345_STS_REG_E);
 		else {
-			SMB_NOTICE("Status Reg E=0x02%x\n", retval);
+			SMB_NOTICE("Status Reg E=0x%02x\n", retval);
 
 			if ((retval & 0xF) <= 0x1) {
 				SMB_NOTICE("reconfig input current limit\n");
@@ -677,6 +680,7 @@ static void cable_det_work_function(struct work_struct *dat)
 		}
 	}
 }
+EXPORT_SYMBOL(reconfig_AICL);
 
 static int smb345_inok_irq(struct smb345_charger *smb)
 {
@@ -781,6 +785,9 @@ void smb345_otg_status(bool on)
 				"otg..\n", __func__);
 			return;
 		}
+		if (wireless_is_plugged())
+			wireless_reset();
+		return;
 	} else
 		otg_on = false;
 
@@ -942,6 +949,30 @@ static ssize_t smb345_reg_show(struct device *dev, struct device_attribute *attr
 	return strlen(buf);
 }
 
+static ssize_t smb345_float_voltage_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%u\n", float_volt_setting);
+}
+
+/* Set charger float voltage; desired value in mV. */
+static ssize_t smb345_float_voltage_store(struct device *dev,
+	struct device_attribute *attr, const char *buf, size_t count)
+{
+	int val = 0;
+
+	if(kstrtoint(buf, 0, &val) != 0)
+		goto error;
+	val = (val / 20) * 20; /* the charger can only do 20mV increments */
+	if(val < 3800 || val > 4300)
+		goto error;
+
+	float_volt_setting = val;
+
+	return count;
+error:
+	return -EINVAL;
+}
+
 static int smb345_otg_setting(struct i2c_client *client)
 {
 	int ret;
@@ -1101,12 +1132,25 @@ int smb345_config_thermal_charging(int temp, int volt, int rule)
 	struct i2c_client *client = charger->client;
 	int ret = 0, retval, setting = 0;
 	int BAT_Mid_Temp = BAT_Mid_Temp_Wired;
+	/*Charger float voltage for normal temperature conditions. Default 4.3V.*/
+	int flt_volt_43 = FLOAT_VOLT_43V;
+	/*Charger float voltage for high temperature conditions. Default 4.1V.*/
+	int flt_volt_low = FLOAT_VOLT_LOW;
+
+	flt_volt_43 = (float_volt_setting - 3500) / 20;
+
+	if(flt_volt_43 < 0 || flt_volt_43 > FLOAT_VOLT_43V) {
+		SMB_NOTICE("BUG: Invalid float voltage setting calculated: %d\n", flt_volt_43);
+		flt_volt_43 = FLOAT_VOLT_43V;
+	}
+	if(flt_volt_low > flt_volt_43) flt_volt_low = flt_volt_43;
 
 	if (rule == THERMAL_RULE1)
 		BAT_Mid_Temp = BAT_Mid_Temp_Wired;
 	else if (rule == THERMAL_RULE2)
 		BAT_Mid_Temp = BAT_Mid_Temp_Wireless;
 
+	mdelay(100);
 	smb345_config_thermal_limit();
 
 	SMB_NOTICE("temp=%d, volt=%d\n", temp, volt);
@@ -1129,10 +1173,10 @@ int smb345_config_thermal_charging(int temp, int volt, int rule)
 	if (temp <= BAT_Mid_Temp
 		|| (temp > BAT_Mid_Temp && volt > FLOAT_VOLT_LOW_DECIMAL)
 		|| temp > BAT_Hot_Limit) {
-		if (setting != FLOAT_VOLT_43V) {
+		if (setting != flt_volt_43) {
 			setting = retval & (~FLOAT_VOLT_MASK);
-			setting |= FLOAT_VOLT_43V;
-			SMB_NOTICE("Set Float Volt, retval=%x setting=%x\n", retval, setting);
+			setting |= flt_volt_43;
+			SMB_NOTICE("Set Float Volt, retval=%x setting=%x V=%dmV\n", retval, setting, float_volt_setting);
 			ret = smb345_write(client, smb345_FLOAT_VLTG, setting);
 			if (ret < 0) {
 				dev_err(&client->dev, "%s(): Failed in writing 0x%02x to register"
@@ -1140,11 +1184,11 @@ int smb345_config_thermal_charging(int temp, int volt, int rule)
 				goto error;
 			}
 		} else
-			SMB_NOTICE("Bypass set Float Volt=%x\n", retval);
+			SMB_NOTICE("Bypass set Float Volt setting=%x V=%dmV\n", retval, float_volt_setting);
 	} else {
-		if (setting != FLOAT_VOLT_LOW) {
+		if (setting != flt_volt_low) {
 			setting = retval & (~FLOAT_VOLT_MASK);
-			setting |= FLOAT_VOLT_LOW;
+			setting |= flt_volt_low;
 			SMB_NOTICE("Set Float Volt, retval=%x setting=%x\n", retval, setting);
 			ret = smb345_write(client, smb345_FLOAT_VLTG, setting);
 			if (ret < 0) {
@@ -1242,8 +1286,6 @@ static int __devinit smb345_probe(struct i2c_client *client,
 		wireless_det_work_function);
 	INIT_DELAYED_WORK_DEFERRABLE(&charger->wireless_set_current_work,
 		wireless_set_current_function);
-	INIT_DELAYED_WORK_DEFERRABLE(&charger->cable_det_work,
-		cable_det_work_function);
 
 	wake_lock_init(&charger_wakelock, WAKE_LOCK_SUSPEND,
 			"charger_configuration");

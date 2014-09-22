@@ -1,0 +1,3 @@
+#define SC_MAX_VDD		1400000
+#define SC_MIN_VDD		 500000
+#define MEM_DIG_MAX_VDD		1250000

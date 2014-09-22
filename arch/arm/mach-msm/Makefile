@@ -30,7 +30,6 @@ obj-$(CONFIG_ARCH_MSM_SCORPIONMP) += perf_event_msm_l2.o
 obj-$(CONFIG_ARCH_MSM_KRAIT) += msm-krait-l2-accessors.o pmu.o perf_event_msm_krait_l2.o
 obj-$(CONFIG_ARCH_MSM_KRAIT) += krait-scm.o
 obj-$(CONFIG_ARCH_MSM7X27A) += pmu.o
-obj-$(CONFIG_DEBUG_FS) += perf_debug.o
 
 ifndef CONFIG_MSM_SMP
 obj-$(CONFIG_ARCH_MSM_SCORPION) += msm_fault_handlers.o
@@ -319,6 +318,9 @@ obj-$(CONFIG_HTC_HEADSET) += htc_headset.o
 obj-$(CONFIG_MSM_RMT_STORAGE_CLIENT) += rmt_storage_client.o
 obj-$(CONFIG_MSM_SDIO_SMEM) += sdio_smem.o
 obj-$(CONFIG_MSM_RPM) += rpm.o
+
+obj-$(CONFIG_LCD_KCAL) += msm_kcal_ctrl.o
+
 ifdef CONFIG_MSM_RPM
 	obj-$(CONFIG_ARCH_APQ8064) += rpm_resources.o
 	obj-$(CONFIG_ARCH_MSM8960) += rpm_resources.o
@@ -360,6 +362,7 @@ obj-$(CONFIG_ARCH_MSM9625) += gpiomux-v2.o gpiomux.o
 
 obj-$(CONFIG_MSM_SLEEP_STATS_DEVICE) += idle_stats_device.o
 obj-$(CONFIG_MSM_DCVS) += msm_dcvs_scm.o msm_dcvs.o msm_mpdecision.o
+obj-$(CONFIG_MSM_HOTPLUG) += msm_hotplug.o
 obj-$(CONFIG_MSM_RUN_QUEUE_STATS) += msm_rq_stats.o
 obj-$(CONFIG_MSM_SHOW_RESUME_IRQ) += msm_show_resume_irq.o
 obj-$(CONFIG_BT_MSM_PINTEST)  += btpintest.o
@@ -388,8 +391,12 @@ obj-$(CONFIG_MSM_HSIC_SYSMON_TEST) += hsic_sysmon_test.o
 obj-$(CONFIG_MSM_RPM_SMD) += rpm-smd.o
 obj-$(CONFIG_MSM_CPR) += msm_cpr.o
 obj-$(CONFIG_MSM_VP_REGULATOR) += msm_vp.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
+obj-$(CONFIG_MSM_SLEEPER) += msm-sleeper.o
 
 ifdef CONFIG_MSM_CPR
 obj-$(CONFIG_DEBUG_FS) += msm_cpr-debug.o
 endif
 obj-$(CONFIG_MSM_CPU_PWRCTL) +=  msm_cpu_pwrctl.o
+
+obj-$(CONFIG_LCD_KCAL_STANDALONE) += msm_kcal_ctrl.o

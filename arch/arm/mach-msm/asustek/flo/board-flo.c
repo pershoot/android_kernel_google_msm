@@ -247,7 +247,7 @@ static void enable_cap1106_regulator(void) {
 #define HOLE_SIZE		0x20000
 #define MSM_CONTIG_MEM_SIZE  0x65000
 #ifdef CONFIG_MSM_IOMMU
-#define MSM_ION_MM_SIZE		0x4C00000
+#define MSM_ION_MM_SIZE		0x5C00000
 #define MSM_ION_SF_SIZE		0
 #define MSM_ION_QSECOM_SIZE	0x780000 /* (7.5MB) */
 #define MSM_ION_HEAP_NUM	7
@@ -2085,10 +2085,10 @@ static struct platform_device msm_tsens_device = {
 
 static struct msm_thermal_data msm_thermal_pdata = {
 	.sensor_id = 7,
-	.poll_ms = 250,
+/*	.poll_ms = 250,
 	.limit_temp_degC = 60,
 	.temp_hysteresis_degC = 10,
-	.freq_step = 2,
+	.freq_step = 2,*/
 };
 
 #define MSM_SHARED_RAM_PHYS 0x80000000
@@ -2222,13 +2222,13 @@ static struct msm_rpmrs_platform_data msm_rpmrs_data __initdata = {
 		[MSM_RPMRS_VDD_MEM_RET_LOW]	= 750000,
 		[MSM_RPMRS_VDD_MEM_RET_HIGH]	= 750000,
 		[MSM_RPMRS_VDD_MEM_ACTIVE]	= 1050000,
-		[MSM_RPMRS_VDD_MEM_MAX]		= 1150000,
+		[MSM_RPMRS_VDD_MEM_MAX]		= 1250000,
 	},
 	.vdd_dig_levels = {
 		[MSM_RPMRS_VDD_DIG_RET_LOW]	= 500000,
 		[MSM_RPMRS_VDD_DIG_RET_HIGH]	= 750000,
 		[MSM_RPMRS_VDD_DIG_ACTIVE]	= 950000,
-		[MSM_RPMRS_VDD_DIG_MAX]		= 1150000,
+		[MSM_RPMRS_VDD_DIG_MAX]		= 1250000,
 	},
 	.vdd_mask = 0x7FFFFF,
 	.rpmrs_target_id = {
@@ -3277,10 +3277,10 @@ static struct i2c_registry i2c_anx7808_devices __initdata = {
 static void __init add_i2c_anx7808_device(void)
 {
 	if (machine_is_apq8064_flo()) {
-		anx7808_pdata.phy_reg2 = 0x39;
-		anx7808_pdata.phy_reg12 = 0x09;
+		anx7808_pdata.phy_reg2 = 0x3f;
+		anx7808_pdata.phy_reg12 = 0x10;
 		anx7808_pdata.phy_reg6 = 0x3f;
-		anx7808_pdata.phy_reg16 = 0x1d;
+		anx7808_pdata.phy_reg16 = 0x1f;
 	} else if (machine_is_apq8064_deb()) {
 		anx7808_pdata.phy_reg2 = 0x3a;
 		anx7808_pdata.phy_reg12 = 0x09;

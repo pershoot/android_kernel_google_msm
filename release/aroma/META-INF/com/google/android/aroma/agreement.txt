@@ -1,0 +1,15 @@
+
+
+<b>Agreement:</b>
+
+<*>This kernel is provided as-is without warranty. You are installing this at your own risks</*>
+
+<*>I'm not responsible for any problem you may encounter with your phone or if your cat suddenly dies.</*>
+
+<*>By using this kernel, you agree with the above terms!</*>
+
+<*>PLEASE NOTE:
+
+This kernel will allow you to choose hardware settings that may not work with your device.
+
+If you install this and have problems such as instability or random reboots, please reinstall with a lower CPU frequency or higher voltage.</*>

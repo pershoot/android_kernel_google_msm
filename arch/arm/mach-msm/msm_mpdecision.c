@@ -116,7 +116,7 @@ enum {
 	HPUPDATE_IN_PROGRESS = 2, /* we are in the process of hotplugging */
 };
 
-static int msm_mpd_enabled = 1;
+static int msm_mpd_enabled = 0;
 module_param_named(enabled, msm_mpd_enabled, int, S_IRUGO | S_IWUSR | S_IWGRP);
 
 static struct dentry *debugfs_base;
@@ -362,6 +362,7 @@ static int __cpuinit msm_mpd_do_hotplug(void *data)
 	int cpu;
 
 	while (1) {
+		msm_dcvs_update_algo_params();
 		wait_event(msm_mpd.wait_hpq, *event || kthread_should_stop());
 		if (kthread_should_stop())
 			break;
@@ -394,7 +395,6 @@ restart:
 				}
 		msm_mpd.hpupdate = HPUPDATE_WAITING;
 		msm_dcvs_apply_gpu_floor(0);
-		msm_dcvs_update_algo_params();
 	}
 
 	return 0;
